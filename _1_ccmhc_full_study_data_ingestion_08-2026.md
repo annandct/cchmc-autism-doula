@@ -1,0 +1,13336 @@
+SMITH-STUDY: Updated Data Processing; STRESS-Scale and Self-Efficacy
+Scale (EIPSES)
+================
+2026-08-18
+
+# 1. Setup & Data Ingestion
+
+## 1.1 Libraries
+
+``` r
+library(dplyr)       # Data manipulation
+library(stringr)     # String manipulation
+library(tidyr)       # Data pivoting
+library(readr)       # Reading data
+library(kableExtra)  # HTML Table formatting
+library(ggplot2)     # Visualizations
+library(ggpubr)      # Publication-ready plots
+library(rstatix)     # T-tests and effect sizes
+library(broom)       # Tidy statistical outputs
+library(forcats)     # Factor manipulation
+library(effectsize)  # effect size & omega squared
+```
+
+## 1.2 Load Data
+
+### 1.2.0 !! Updated Data File:
+
+- **UPDATED DATA FILE** - SEFF_Updated…
+  - Both Surveys are connected to a single participant ID (Pre and Post)
+    and collated in one spreadsheet
+  - Will separate each into its own table, for clarity/checks and file
+    write out.
+  - Rejoin and save data files for analysis scripts.
+- **Structure**
+  - Study_ID (Joined ID across pre and post, unique to participant)
+  - Group Assignment (Control or Intervention)
+  - Stress Scale: **PSS** - *Perceived Stress Scale* - 10 Questions
+  - SEFF Scale: **EFF** - *Eearly Intervention Parent Self Efficacy* -
+    14 Questions
+  - Columns as Pre –\> Post
+
+### 1.2.1 Pre PSS
+
+``` r
+# Read in raw dataset
+ALL_DATA.raw <- read_csv("../_data/stress and SE ALL blind.csv", col_names = TRUE)
+
+#Split to Pre and Post & Select only Study ID, Group Assignment and Questions:
+pre.PSS.named <- 
+  ALL_DATA.raw %>% 
+    select("Study ID", "Group Assignment", 5:14) %>%
+    rename("StudyID" = "Study ID", "Group_Assignment" = "Group Assignment") %>% 
+    rename_with(~paste0("PSS.PRE_Q", (as.numeric(str_extract(., "\\d+$"))-4)), .cols = 3:12) %>% 
+    mutate(across(contains("_Q"), tolower)) #ALL QUESTION TEXT tolower, as earlier data file had capitalization issues; "Agree / agree"
+
+pre.PSS.named %>% kable(caption="STRESS - Pre Intervention Data") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+STRESS - Pre Intervention Data
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+StudyID
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Group_Assignment
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q1
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q2
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q3
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q4
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q5
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q6
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q7
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q8
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q9
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.PRE_Q10
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+60
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+### 1.2.2 Pre EFF
+
+``` r
+#split to pre and select SEFF cols
+pre.EFF.named <- 
+  ALL_DATA.raw %>% 
+    select("Study ID", "Group Assignment", 16:31) %>% 
+    rename("StudyID" = "Study ID", "Group_Assignment" = "Group Assignment") %>% 
+    rename_with(~paste0("EFF.PRE_Q", (as.numeric(str_extract(., "\\d+$"))-15)), .cols = 3:18) %>% 
+    mutate(across(contains("_Q"), tolower)) #ALL QUESTION TEXT tolower, as earlier data file had capitalization issues; "Agree / agree"
+
+pre.EFF.named %>% kable(caption="SEFF - Pre Intervention Data") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+SEFF - Pre Intervention Data
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+StudyID
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Group_Assignment
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q1
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q2
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q3
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q4
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q5
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q6
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q7
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q8
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q9
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q10
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q11
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q12
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q13
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q14
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q15
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.PRE_Q16
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+not applicable
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+60
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+### 1.2.3 Post PSS
+
+``` r
+#Split Post & Select only Study ID, Group Assignment and Questions:
+post.PSS.named <- 
+  ALL_DATA.raw %>% 
+  select("Study ID", "Group Assignment", 34:43) %>% 
+    rename("StudyID" = "Study ID", "Group_Assignment" = "Group Assignment") %>% 
+  rename_with(~paste0("PSS.POST_Q", (as.numeric(str_extract(., "\\d+$"))-33)), .cols = 3:12) %>% 
+    mutate(across(contains("_Q"), tolower)) #ALL QUESTION TEXT tolower, as earlier data file had capitalization issues; "Agree / agree"
+
+post.PSS.named %>% kable(caption="STRESS - Post Intervention Data") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+STRESS - Post Intervention Data
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+StudyID
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Group_Assignment
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q1
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q2
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q3
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q4
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q5
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q6
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q7
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q8
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q9
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+PSS.POST_Q10
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+very often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+sometimes
+</td>
+
+<td style="text-align:left;">
+
+fairly often
+</td>
+
+<td style="text-align:left;">
+
+never
+</td>
+
+<td style="text-align:left;">
+
+almost never
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+60
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+### 1.2.4 Post EFF
+
+``` r
+#split to pre and select SEFF cols
+post.EFF.named  <- 
+  ALL_DATA.raw %>% 
+    select("Study ID", "Group Assignment", 45:60) %>% 
+    rename("StudyID" = "Study ID", "Group_Assignment" = "Group Assignment") %>% 
+    rename_with(~paste0("EFF.POST_Q", (as.numeric(str_extract(., "\\d+$"))-44)), .cols = 3:18) %>% 
+    mutate(across(contains("_Q"), tolower)) #ALL QUESTION TEXT tolower, as earlier data file had capitalization issues; "Agree / agree"
+
+post.EFF.named %>% kable(caption="SEFF - Post Intervention Data") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+SEFF - Post Intervention Data
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+StudyID
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Group_Assignment
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q1
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q2
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q3
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q4
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q5
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q6
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q7
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q8
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q9
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q10
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q11
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q12
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q13
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q14
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q15
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+EFF.POST_Q16
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+neutral
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+strongly agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+somewhat agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+strongly disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+agree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+<td style="text-align:left;">
+
+disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+60
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+## 1.3 Joins & Item Checks
+
+``` r
+#join tables
+all.PSS.named <- left_join(pre.PSS.named, post.PSS.named, by = c("StudyID", "Group_Assignment"))
+
+#check all unique strings in questions
+PSS.uniques <- all.PSS.named %>%  
+  select(contains("_Q")) %>% 
+  summarise(across(everything(), ~list(unique(.)))) %>% 
+    pivot_longer(everything(), names_to = "Question", values_to = "Unique_Responses") %>% 
+    unnest(cols = c(Unique_Responses))
+
+table(PSS.uniques$Unique_Responses)
+```
+
+    ## 
+    ## almost never fairly often        never    sometimes   very often 
+    ##           19           20           15           20           16
+
+``` r
+#join tables
+all.EFF.named <- left_join(pre.EFF.named, post.EFF.named, by = c("StudyID", "Group_Assignment"))
+
+#check all unique strings in questions
+EFF.uniques <- 
+  all.EFF.named %>% 
+  select(contains("_Q")) %>% 
+  summarise(across(everything(), ~list(unique(.)))) %>% 
+    pivot_longer(everything(), names_to = "Question", values_to = "Unique_Responses") %>% 
+    unnest(cols = c(Unique_Responses))
+
+table(EFF.uniques$Unique_Responses)
+```
+
+    ## 
+    ##             agree          disagree           neutral    not applicable 
+    ##                28                22                25                 1 
+    ##    somewhat agree somewhat disagree    strongly agree strongly disagree 
+    ##                25                24                22                21
+
+### ——
+
+# 2. Scoring & Data Transformation
+
+``` r
+#all.PSS.named %>% glimpse()
+```
+
+## 2.1 PSS-STRESS: Item Scoring and Reverse Coding
+
+Scoring: PSS scores are obtained by reversing responses (e.g., 0 = 4, 1
+= 3, 2 = 2, 3 = 1 & 4 = 0) to the four positively stated items (items 4,
+5, 7, & 8) and then summing across all scale items. A short 4 item scale
+can be made from questions 2, 4, 5 and 10 of the PSS 10 item scale.
+
+``` r
+PSS.mutated <- all.PSS.named %>% 
+  # 1. Convert text responses to numeric scores
+  mutate(across(contains("_Q"), ~case_when(
+    . == "never" ~ 0,
+    . == "almost never" ~ 1,
+    . == "sometimes" ~ 2,
+    . == "fairly often" ~ 3,
+    . == "very often" ~ 4,
+    TRUE ~ NA_real_
+  ))) %>% 
+  # 2. Reverse code specific items
+  mutate(across(ends_with(c("Q4", "Q5", "Q7", "Q8")), ~case_when(
+    . == 0 ~ 4,
+    . == 1 ~ 3,
+    . == 2 ~ 2,
+    . == 3 ~ 1,
+    . == 4 ~ 0,
+    TRUE ~ NA_real_
+  ))) %>% 
+  rowwise() %>% #group rows (individual ID)
+  # 3. Calculate total scores
+  mutate(PRE_Stress.Total = sum(c_across(starts_with("PSS.PRE_Q")), na.rm = FALSE),
+         POST_Stress.Total = sum(c_across(starts_with("PSS.POST_Q")), na.rm = FALSE),
+         PRE_Stress.Mean = mean(c_across(starts_with("PSS.PRE_Q")), na.rm = FALSE),
+         POST_Stress.Mean = mean(c_across(starts_with("PSS.POST_Q")), na.rm = FALSE),
+         PRE_Stress.StDev = sd(c_across(starts_with("PSS.PRE_Q")), na.rm = FALSE),
+         POST_Stress.StDev = sd(c_across(starts_with("PSS.POST_Q")), na.rm = FALSE)
+         ) %>% 
+    ungroup()
+
+PSS.mutated %>% select(StudyID, Group_Assignment, contains("PRE_S"), contains("POST_S")) %>%
+  kable(caption="PSS - Calculated Columns") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+PSS - Calculated Columns
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+StudyID
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Group_Assignment
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+PRE_Stress.Total
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+PRE_Stress.Mean
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+PRE_Stress.StDev
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+POST_Stress.Total
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+POST_Stress.Mean
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+POST_Stress.StDev
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:right;">
+
+2.1
+</td>
+
+<td style="text-align:right;">
+
+0.876
+</td>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:right;">
+
+1.4
+</td>
+
+<td style="text-align:right;">
+
+0.699
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+20
+</td>
+
+<td style="text-align:right;">
+
+2.0
+</td>
+
+<td style="text-align:right;">
+
+0.816
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:right;">
+
+2.2
+</td>
+
+<td style="text-align:right;">
+
+0.422
+</td>
+
+<td style="text-align:right;">
+
+0
+</td>
+
+<td style="text-align:right;">
+
+0.0
+</td>
+
+<td style="text-align:right;">
+
+0.000
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:right;">
+
+1.3
+</td>
+
+<td style="text-align:right;">
+
+0.483
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:right;">
+
+1.2
+</td>
+
+<td style="text-align:right;">
+
+0.789
+</td>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:right;">
+
+1.0
+</td>
+
+<td style="text-align:right;">
+
+0.816
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:right;">
+
+2.1
+</td>
+
+<td style="text-align:right;">
+
+0.316
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:right;">
+
+1.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:right;">
+
+1.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+0.6
+</td>
+
+<td style="text-align:right;">
+
+0.699
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:right;">
+
+2.2
+</td>
+
+<td style="text-align:right;">
+
+1.317
+</td>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:right;">
+
+2.1
+</td>
+
+<td style="text-align:right;">
+
+1.370
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:right;">
+
+2.1
+</td>
+
+<td style="text-align:right;">
+
+0.738
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:right;">
+
+0.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:right;">
+
+0.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:right;">
+
+1.1
+</td>
+
+<td style="text-align:right;">
+
+0.876
+</td>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:right;">
+
+0.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:right;">
+
+1.2
+</td>
+
+<td style="text-align:right;">
+
+0.422
+</td>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:right;">
+
+0.8
+</td>
+
+<td style="text-align:right;">
+
+0.789
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:right;">
+
+2.1
+</td>
+
+<td style="text-align:right;">
+
+0.568
+</td>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:right;">
+
+2.1
+</td>
+
+<td style="text-align:right;">
+
+0.568
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:right;">
+
+1.2
+</td>
+
+<td style="text-align:right;">
+
+0.789
+</td>
+
+<td style="text-align:right;">
+
+19
+</td>
+
+<td style="text-align:right;">
+
+1.9
+</td>
+
+<td style="text-align:right;">
+
+0.738
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:right;">
+
+1.2
+</td>
+
+<td style="text-align:right;">
+
+1.033
+</td>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:right;">
+
+1.3
+</td>
+
+<td style="text-align:right;">
+
+0.483
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:right;">
+
+1.8
+</td>
+
+<td style="text-align:right;">
+
+0.789
+</td>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:right;">
+
+1.8
+</td>
+
+<td style="text-align:right;">
+
+0.422
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+0.5
+</td>
+
+<td style="text-align:right;">
+
+0.707
+</td>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:right;">
+
+0.9
+</td>
+
+<td style="text-align:right;">
+
+0.568
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:right;">
+
+0.8
+</td>
+
+<td style="text-align:right;">
+
+1.135
+</td>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:right;">
+
+1.0
+</td>
+
+<td style="text-align:right;">
+
+0.943
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:right;">
+
+1.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:right;">
+
+1.3
+</td>
+
+<td style="text-align:right;">
+
+0.483
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+27
+</td>
+
+<td style="text-align:right;">
+
+2.7
+</td>
+
+<td style="text-align:right;">
+
+0.823
+</td>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:right;">
+
+1.7
+</td>
+
+<td style="text-align:right;">
+
+0.675
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+25
+</td>
+
+<td style="text-align:right;">
+
+2.5
+</td>
+
+<td style="text-align:right;">
+
+0.707
+</td>
+
+<td style="text-align:right;">
+
+20
+</td>
+
+<td style="text-align:right;">
+
+2.0
+</td>
+
+<td style="text-align:right;">
+
+1.491
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+0.7
+</td>
+
+<td style="text-align:right;">
+
+0.675
+</td>
+
+<td style="text-align:right;">
+
+15
+</td>
+
+<td style="text-align:right;">
+
+1.5
+</td>
+
+<td style="text-align:right;">
+
+0.972
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+25
+</td>
+
+<td style="text-align:right;">
+
+2.5
+</td>
+
+<td style="text-align:right;">
+
+0.707
+</td>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:right;">
+
+1.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:right;">
+
+1.7
+</td>
+
+<td style="text-align:right;">
+
+0.483
+</td>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:right;">
+
+1.8
+</td>
+
+<td style="text-align:right;">
+
+0.632
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+0.7
+</td>
+
+<td style="text-align:right;">
+
+0.949
+</td>
+
+<td style="text-align:right;">
+
+24
+</td>
+
+<td style="text-align:right;">
+
+2.4
+</td>
+
+<td style="text-align:right;">
+
+0.843
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+20
+</td>
+
+<td style="text-align:right;">
+
+2.0
+</td>
+
+<td style="text-align:right;">
+
+0.667
+</td>
+
+<td style="text-align:right;">
+
+24
+</td>
+
+<td style="text-align:right;">
+
+2.4
+</td>
+
+<td style="text-align:right;">
+
+0.699
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+27
+</td>
+
+<td style="text-align:right;">
+
+2.7
+</td>
+
+<td style="text-align:right;">
+
+0.823
+</td>
+
+<td style="text-align:right;">
+
+19
+</td>
+
+<td style="text-align:right;">
+
+1.9
+</td>
+
+<td style="text-align:right;">
+
+0.568
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+0.7
+</td>
+
+<td style="text-align:right;">
+
+0.675
+</td>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:right;">
+
+1.1
+</td>
+
+<td style="text-align:right;">
+
+0.876
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+60
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:right;">
+
+2.6
+</td>
+
+<td style="text-align:right;">
+
+1.265
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+<td style="text-align:right;">
+
+NA
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+## 2.2 Scoring Guidelines (Guimond et al., 2008):
+
+    - Mean/Total scores are computed by aggregating all items of the specific scale.
+    - Reverse Scored Items: 3, 5, 6, 8, 10, 12, 13, 15, 16.
+    - Parent Outcome Expectations: 3, 4, 5, 6, 7, 8, 10, 12, 15, 16.
+    - Parent Competence: 1, 2, 9, 14.
+
+``` r
+#all.EFF.named %>% glimpse()
+```
+
+``` r
+EFF.mutated <- all.EFF.named %>% 
+  # 1. Convert text to numeric Likert (1-7)
+  mutate(across(contains("_Q"), ~case_match(.,
+    "strongly disagree" ~ 1,
+    "disagree" ~ 2,
+    "somewhat disagree" ~ 3,
+    "neutral" ~ 4,
+    "somewhat agree" ~ 5,
+    "agree" ~ 6,
+    "strongly agree" ~ 7,
+    .default = NA_real_
+  ))) %>% 
+  
+  # 2. Reverse Code specific items
+  mutate(across(ends_with(c("Q3", "Q5", "Q6", "Q8", "Q10", "Q12", "Q13", "Q15", "Q16")), 
+                ~ 8 - .)) %>% #  For 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
+
+  # 3. Mean replace NAs
+  mutate(across(contains("_Q"), ~ifelse(is.na(.), mean(., na.rm = TRUE), .))) %>%
+  
+  # 4. Calculate Composite Totals
+  mutate(
+    # PRE Composites
+    PRE_Parent_Outcome_Expectations.Sum = rowSums(select(., ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+    PRE_Parent_Competence.Sum = rowSums(select(., ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
+    PRE_Overall_SEFF.Sum = rowSums(select(., contains("PRE_Q")), na.rm = TRUE),
+    
+    # POST Composites
+    POST_Parent_Outcome_Expectations.Sum = rowSums(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Competence.Sum = rowSums(select(., ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
+    POST_Overall_SEFF.Sum = rowSums(select(., contains("POST_Q")), na.rm = TRUE)
+  ) %>% 
+  # 5. Calculate Composite MEANS
+  mutate(
+    # PRE Composites
+    PRE_Parent_Outcome_Expectations.Mean = rowMeans(select(., ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+    PRE_Parent_Competence.Mean = rowMeans(select(., ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
+    PRE_Overall_SEFF.Mean = rowMeans(select(., contains("PRE_Q")), na.rm = TRUE),
+    
+    # POST Composites
+    POST_Parent_Outcome_Expectations.Mean = rowMeans(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Competence.Mean = rowMeans(select(., ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
+    POST_Overall_SEFF.Mean = rowMeans(select(., contains("POST_Q")), na.rm = TRUE)
+  ) #%>% 
+  #mutate(Filter_Diff = POST_Overall_SEFF.Mean - PRE_Overall_SEFF.Mean)
+
+if(is.na(EFF.mutated) %>% sum() > 0){
+  # Check for any remaining NAs in the final scored dataset
+  print("ERROR - NA OR MISSING DATA")
+}
+```
+
+``` r
+EFF.mutated %>% select(StudyID, Group_Assignment, contains(c("Total","Mean"))) %>%
+  kable(caption="EFF - Calculated Columns") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+EFF - Calculated Columns
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+StudyID
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Group_Assignment
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+PRE_Parent_Outcome_Expectations.Mean
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+PRE_Parent_Competence.Mean
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+PRE_Overall_SEFF.Mean
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+POST_Parent_Outcome_Expectations.Mean
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+POST_Parent_Competence.Mean
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+POST_Overall_SEFF.Mean
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.36
+</td>
+
+<td style="text-align:right;">
+
+5.76
+</td>
+
+<td style="text-align:right;">
+
+5.56
+</td>
+
+<td style="text-align:right;">
+
+6.30
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+6.19
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+4.30
+</td>
+
+<td style="text-align:right;">
+
+4.75
+</td>
+
+<td style="text-align:right;">
+
+4.19
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.20
+</td>
+
+<td style="text-align:right;">
+
+6.25
+</td>
+
+<td style="text-align:right;">
+
+5.56
+</td>
+
+<td style="text-align:right;">
+
+5.60
+</td>
+
+<td style="text-align:right;">
+
+6.75
+</td>
+
+<td style="text-align:right;">
+
+6.06
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+4.78
+</td>
+
+<td style="text-align:right;">
+
+4.52
+</td>
+
+<td style="text-align:right;">
+
+4.88
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.10
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+<td style="text-align:right;">
+
+5.44
+</td>
+
+<td style="text-align:right;">
+
+5.80
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+5.62
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+4.88
+</td>
+
+<td style="text-align:right;">
+
+6.02
+</td>
+
+<td style="text-align:right;">
+
+5.32
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.36
+</td>
+
+<td style="text-align:right;">
+
+5.76
+</td>
+
+<td style="text-align:right;">
+
+5.56
+</td>
+
+<td style="text-align:right;">
+
+3.20
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+<td style="text-align:right;">
+
+4.19
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.77
+</td>
+
+<td style="text-align:right;">
+
+5.76
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.10
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.31
+</td>
+
+<td style="text-align:right;">
+
+3.80
+</td>
+
+<td style="text-align:right;">
+
+4.25
+</td>
+
+<td style="text-align:right;">
+
+3.81
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+5.60
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+6.30
+</td>
+
+<td style="text-align:right;">
+
+6.50
+</td>
+
+<td style="text-align:right;">
+
+6.44
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+4.90
+</td>
+
+<td style="text-align:right;">
+
+6.25
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.70
+</td>
+
+<td style="text-align:right;">
+
+4.75
+</td>
+
+<td style="text-align:right;">
+
+5.62
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+5.31
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+6.25
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+4.90
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.19
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.20
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+<td style="text-align:right;">
+
+5.62
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+6.20
+</td>
+
+<td style="text-align:right;">
+
+6.75
+</td>
+
+<td style="text-align:right;">
+
+6.44
+</td>
+
+<td style="text-align:right;">
+
+4.60
+</td>
+
+<td style="text-align:right;">
+
+6.50
+</td>
+
+<td style="text-align:right;">
+
+5.25
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.77
+</td>
+
+<td style="text-align:right;">
+
+6.25
+</td>
+
+<td style="text-align:right;">
+
+5.98
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+6.12
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.90
+</td>
+
+<td style="text-align:right;">
+
+6.50
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+5.38
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.30
+</td>
+
+<td style="text-align:right;">
+
+4.25
+</td>
+
+<td style="text-align:right;">
+
+5.12
+</td>
+
+<td style="text-align:right;">
+
+7.00
+</td>
+
+<td style="text-align:right;">
+
+7.00
+</td>
+
+<td style="text-align:right;">
+
+7.00
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+4.90
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+5.60
+</td>
+
+<td style="text-align:right;">
+
+6.25
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.36
+</td>
+
+<td style="text-align:right;">
+
+5.76
+</td>
+
+<td style="text-align:right;">
+
+5.56
+</td>
+
+<td style="text-align:right;">
+
+5.40
+</td>
+
+<td style="text-align:right;">
+
+4.50
+</td>
+
+<td style="text-align:right;">
+
+5.25
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.80
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+5.94
+</td>
+
+<td style="text-align:right;">
+
+5.80
+</td>
+
+<td style="text-align:right;">
+
+6.75
+</td>
+
+<td style="text-align:right;">
+
+6.06
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+5.25
+</td>
+
+<td style="text-align:right;">
+
+5.19
+</td>
+
+<td style="text-align:right;">
+
+5.40
+</td>
+
+<td style="text-align:right;">
+
+6.50
+</td>
+
+<td style="text-align:right;">
+
+5.81
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.80
+</td>
+
+<td style="text-align:right;">
+
+6.50
+</td>
+
+<td style="text-align:right;">
+
+6.12
+</td>
+
+<td style="text-align:right;">
+
+5.30
+</td>
+
+<td style="text-align:right;">
+
+4.75
+</td>
+
+<td style="text-align:right;">
+
+5.19
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.36
+</td>
+
+<td style="text-align:right;">
+
+5.76
+</td>
+
+<td style="text-align:right;">
+
+5.56
+</td>
+
+<td style="text-align:right;">
+
+5.60
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+4.30
+</td>
+
+<td style="text-align:right;">
+
+4.75
+</td>
+
+<td style="text-align:right;">
+
+4.62
+</td>
+
+<td style="text-align:right;">
+
+5.40
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.56
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+6.25
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+<td style="text-align:right;">
+
+5.25
+</td>
+
+<td style="text-align:right;">
+
+5.38
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+6.00
+</td>
+
+<td style="text-align:right;">
+
+7.00
+</td>
+
+<td style="text-align:right;">
+
+6.31
+</td>
+
+<td style="text-align:right;">
+
+5.20
+</td>
+
+<td style="text-align:right;">
+
+4.75
+</td>
+
+<td style="text-align:right;">
+
+5.12
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.60
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+<td style="text-align:right;">
+
+5.69
+</td>
+
+<td style="text-align:right;">
+
+5.20
+</td>
+
+<td style="text-align:right;">
+
+4.50
+</td>
+
+<td style="text-align:right;">
+
+5.19
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:left;">
+
+Intervention
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+5.00
+</td>
+
+<td style="text-align:right;">
+
+5.19
+</td>
+
+<td style="text-align:right;">
+
+5.40
+</td>
+
+<td style="text-align:right;">
+
+5.75
+</td>
+
+<td style="text-align:right;">
+
+5.56
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+60
+</td>
+
+<td style="text-align:left;">
+
+Control
+</td>
+
+<td style="text-align:right;">
+
+5.38
+</td>
+
+<td style="text-align:right;">
+
+6.02
+</td>
+
+<td style="text-align:right;">
+
+5.63
+</td>
+
+<td style="text-align:right;">
+
+5.35
+</td>
+
+<td style="text-align:right;">
+
+5.68
+</td>
+
+<td style="text-align:right;">
+
+5.50
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+# 3. Save Analaysis Tables and Write File for Download/Use
+
+``` r
+EFF.scored <- EFF.mutated
+PSS.scored <- PSS.mutated
+
+analytic.files <- list(
+  "EFF.scored" = EFF.scored,
+  "PSS.Scored" = PSS.scored
+  )
+
+readr::write_rds(
+  analytic.files,
+  path = "../_output/analytic_files_scored_surveys.Rds" )
+```
