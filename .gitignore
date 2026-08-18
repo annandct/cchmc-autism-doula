@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+
+cchmc-autism-doula.Rproj
+
+#original data folders
+*_Rscripts/
+/cache
+
+*_cache/
+*_data/
