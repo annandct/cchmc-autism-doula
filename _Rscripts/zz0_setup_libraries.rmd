@@ -1,0 +1,72 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+date: "2025-09-30"
+title: "0_setup_libraries"
+---
+
+```{r setup, include=FALSE}
+base_dir <- "../" # where output should default to
+base_url <- "" # keep as is
+fig_path <- "plot_images/" # where image output should go
+
+knitr::opts_knit$set(base.dir = base_dir)
+knitr::opts_chunk$set(fig.path = fig_path,
+                      cache.path = '../cache/',  #log files go here
+                      message=FALSE, warning=FALSE,
+                      cache = TRUE) 
+```  
+
+
+## Note on Rmardkown or "Notebooks"
+- This is an Rmarkdown, which allows code 'chunks' or 'blocks' and text in the same document.
+- Code output - such as viewing tables or charts appears below blocks when you write them. 
+
+- It is useful to write outlines and sections for specific chunks.
+- And to write analytic notes below different code chunks. 
+- The output of an Rmarkdown (.Rmd) can be published as a .PDF, word doc, or .HTML file. 
+
+- In the YAML header and chunk above, are specific options for file organization.
+  - Markdown documents -- readable versions of the analysis live in the main folder
+  - The scripts that create these live in _Rscripts
+  - *input* data in _data, including created data for analysis (e.g. R.data objects...)
+  - *output* goes into _tables or plots_images depending on type.
+
+
+## 0. Setup
+### Required Packages
+- For convenience, this code checks if libraries are installed - and if not, installs them. 
+- It is also copied in the first script - _Rscripts/1_data_ingest_clean_describe.Rmd
+
+```{r LIBRARIES}
+## required packages
+
+#check if installed, if not install
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr") #for manipulating data, using PIPES %>% for easier readability
+if (!requireNamespace("tidyr", quietly = TRUE)) install.packages("tidyr") #pivoting and manipulating data, structuring data for output
+if (!requireNamespace("kableExtra", quietly = TRUE)) install.packages("kableExtra") #for making HTML tables in Rmarkdown
+if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr") #for making HTML tables in Rmarkdown
+if (!requireNamespace("readxl", quietly = TRUE)) install.packages("readxl")
+if (!requireNamespace("jtools", quietly = TRUE)) install.packages("jtools")
+if (!requireNamespace("tableone", quietly = TRUE)) install.packages("tableone") #make APA style tables for publication
+if (!requireNamespace("jtools", quietly = TRUE)) install.packages("jtools") #APA format - theme
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2") #tailored graphs/charts & data viz for exploration
+if (!requireNamespace("patchwork", quietly = TRUE)) install.packages("patchwork") #for combining ggplot2 charts
+if (!requireNamespace("moments", quietly = TRUE)) install.packages("moments") #for skewness and kurtosis calculations
+
+# non-library functions
+#source("_Rscripts/dependencies/PROCESS\ v5.0\ for\ R/process.R") #loads HAYES PROCESS functions.  - not currently needed - this has to be downloaded separately.
+```
+
+### Info on apps/code used for this work
+```{r}
+sessionInfo()   #utility to see what version of R, Rstudio, and Package versions are used for this work. 
+```
+

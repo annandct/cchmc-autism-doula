@@ -1,0 +1,99 @@
+---
+title: "SMITH-STUDY: Stress Scales - Pre-Post Analysis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float: true
+    code_folding: show
+always_allow_html: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(lubridate)
+```
+
+```{r}
+# Define file paths
+data_path   <- "../_data/stress data pre post.xlsx"
+stress_raw <- read_excel(data_path)
+
+(questions <- names(stress_raw))
+
+# get `...#` at the end of each name for data names
+
+stress_named <- stress_raw %>% 
+  rename("StudyID" = "Number assigned by study staff",
+         "PRE_Stress.Total" = "Pre stress score",
+         "POST_Stress.Total" = "Post stress score") %>% 
+  rename_with(~paste0("PRE_Q", (as.numeric(str_extract(., "\\d+$"))-1)), .cols = 2:11) %>% #cols numbered in order so subtract previous columns for ACTUAL question number
+  rename_with(~paste0("POST_Q", 
+                      (as.numeric(str_extract(., "\\d+$"))-12)) #numbered in order, but SAME questions PRE and POST (subtract previous number of columns (starts on 13-12)
+              , .cols = 13:22)
+names(stress_named)
+```
+
+```{r}
+#check all unique strings in questions
+uniques <- stress_named %>% select(contains("_Q")) %>% 
+  summarise(across(everything(), ~list(unique(.)))) %>% 
+  pivot_longer(everything(), names_to = "Question", values_to = "Unique_Responses") %>% 
+  unnest(cols = c(Unique_Responses))
+
+
+unique(uniques$Unique_Responses)
+```
+
+
+```{r}
+
+stress_mutated <- stress_named %>% 
+  # 1. Convert text responses to numeric scores
+  mutate(across(contains("_Q"), ~case_when(
+    . == "Never" ~ 0,
+    . == "Almost Never" ~ 1,
+    . == "Sometimes" ~ 2,
+    . == "Fairly Often" ~ 3,
+    . == "Very Often" ~ 4,
+    TRUE ~ NA_real_
+  ))) %>% 
+  # 2. Reverse code specific items
+  mutate(across(ends_with(c("Q4", "Q5", "Q7", "Q8")), ~case_when(
+    . == 0 ~ 4,
+    . == 1 ~ 3,
+    . == 2 ~ 2,
+    . == 3 ~ 1,
+    . == 4 ~ 0,
+    TRUE ~ NA_real_
+  )))
+
+stress_mutated
+```
+
+```{r}
+stress_final <- stress_mutated %>% 
+  rowwise() %>%
+  # 3. Calculate total scores
+  mutate(PRE_Stress.Total = sum(c_across(starts_with("PRE_Q")), na.rm = FALSE),
+         POST_Stress.Total = sum(c_across(starts_with("POST_Q")), na.rm = FALSE),
+         PRE_Stress.Mean = mean(c_across(starts_with("PRE_Q")), na.rm = FALSE),
+         POST_Stress.Mean = mean(c_across(starts_with("POST_Q")), na.rm = FALSE)
+         ) %>% 
+    ungroup()
+
+stress_final
+```
+
+```{r}
+#dir.create("../cache", showWarnings = FALSE)
+#dir.create("../_output", showWarnings = FALSE)
+save(stress_final, file = "../_output/stress_final.RData")
+write_csv(stress_final, "../_output/clean_stress_survey_data.csv")
+```
+

@@ -1,0 +1,173 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+title: "3. Descriptives & Baseline Equivalence"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+base_dir <- "../" # where output should default to
+base_url <- "" # keep as is
+fig_path <- "_plot_images/" # where image output should go
+
+knitr::opts_knit$set(base.dir = base_dir)
+knitr::opts_chunk$set(fig.path = fig_path,
+                      cache.path = '../cache/',  #log files go here
+                      message=FALSE, warning=FALSE,
+                      cache = TRUE) 
+```  
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(rstatix) # Great for quick statistical tests
+library(ggpubr)  # For publication-ready plots
+
+load("../_output/stress_final.RData") #load the cleaned data from script 1
+```
+
+#1. Participant Descriptives
+
+```{r}
+stress_final %>%
+  summarise(N = n(),
+            Mean_PRE = mean(PRE_Stress.Total, na.rm = TRUE),
+            SD_PRE = sd(PRE_Stress.Total, na.rm = TRUE),
+            Mean_POST = mean(POST_Stress.Total, na.rm = TRUE),
+            SD_POST = sd(POST_Stress.Total, na.rm = TRUE)
+            ) %>%
+  kable(digits = 2,
+        caption = "Summary Table") %>%
+  kable_styling(full_width = F)
+```
+
+
+
+# 2. Run Cronbach’s alpha for internal consistency
+- Here we will calculate Cronbach's alpha for each scale to check for internal consistency. 
+- A general rule of thumb is that an alpha of > 0.7 is acceptable.
+
+```{r}
+pre_alpha <- stress_final %>% select(contains("PRE_Q")) %>% psych::alpha()
+post_alpha <- stress_final %>% select(contains("POST_Q")) %>% psych::alpha()
+
+## Dataframe of the Cronbach Alpha Tests and Values
+alpha_values <- data.frame(
+  Scale = c("PRE", "POST"),
+  Cronbach_Alpha = c(pre_alpha$total$raw_alpha,
+                     post_alpha$total$raw_alpha)
+)
+
+alpha_values %>% kableExtra::kable(digits=3,
+                                   caption = " Cronbach Alpha Values") %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+```
+
+#3. Descriptive Statistics & Paired T-Tests
+
+```{r}
+# Basic Paired T-test
+t_test_results <- t.test(
+  stress_final$POST_Stress.Total, 
+  stress_final$PRE_Stress.Total, 
+  paired = TRUE
+)
+
+t_test_results %>% tidy() %>% 
+kable(digits =3, caption = "Paired T-Test Results") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+```
+- **Result** is non-significant, p = 0.57
+
+### Pivot Data for RM ANOVA
+- Will end with same result, but just in case you add a Timepoint 3 in the future
+```{r}
+#pivot_longer stress, split on PRE and POST into condition groups 
+stress_long <- stress_final %>%
+  pivot_longer(cols = -StudyID,
+               names_to = c("Timepoint", "Question"), 
+               values_to = "Value",
+              names_sep = "_") %>% 
+  mutate(Timepoint = factor(Timepoint, levels = c("PRE", "POST")))
+# View a sample of the long data
+stress_long %>% glimpse()
+```
+
+```{r}
+## T-TESTS From LONG FRAME
+
+# t_test_results <- stress_long %>% 
+#   filter(grepl(pattern = "Total", Question)) %>%
+#   t_test(Value ~ Timepoint, paired = TRUE, detailed = TRUE) %>%
+#   adjust_pvalue(method = "bonferroni") %>%
+#   add_significance("p.adj")
+# 
+# # Calculate Cohen's d for Effect Size
+# cohens_d_results <- stress_long %>% 
+#   filter(grepl(pattern = "Total", Question)) %>%
+#   cohens_d(Value ~ Timepoint, paired = TRUE)
+# 
+# 
+# t_test_final <- merge.data.frame(t_test_results, cohens_d_results) %>%
+#   select(Composite_Type, statistic, df, p, p.adj, p.adj.signif, effsize, magnitude)
+```
+
+
+## RM ANOVA
+```{r}
+library(ez)
+anova_results <- stress_long %>% filter(Question == "Stress.Total") %>% 
+  ezANOVA(
+  dv = Value,
+  wid = StudyID,
+  within = Timepoint,
+  detailed = TRUE
+)
+
+print(anova_results)
+```
+- **Result** is non-significant, p = 0.57
+
+
+## Plots 
+
+```{r}
+stress_long %>% filter(grepl(x = Question, pattern = "Q")) %>%
+ggplot(aes(x = Question, y=Value, color = Timepoint, fill = Timepoint)) +
+  geom_jitter(alpha = 0.6, width = 0.5, height = 0)+
+  geom_boxplot(width = 0.3, outlier.shape = NA, alpha = 0.5) +
+  #geom_line(aes(group = StudyID), color = "gray", alpha = 0.3) + # Lines connecting individuals
+  #geom_point(aes(color = Timepoint), alpha = 0.6) +
+  theme_minimal() +
+    theme(legend.position = "bottom") +
+  labs(
+    title = "Change in Stress Scores: PRE vs. POST",
+    x = "Total Stress Score",
+    y = "Assessment Time"
+  )
+```
+
+```{r}
+stress_long %>% filter(grepl(x = Question, pattern = "Total")) %>%
+ggplot(aes(x = Timepoint, y=Value, color = Timepoint, fill = Timepoint)) +
+  geom_point(alpha = 0.6, width = 0.1, height = 0)+
+  geom_boxplot(width = 0.3, outlier.shape = NA, alpha = 0.5) +
+  #geom_line(aes(group = StudyID), color = "gray", alpha = 0.3) + # Lines connecting individuals
+  #geom_point(aes(color = Timepoint), alpha = 0.6) +
+  theme_minimal() +
+    theme(legend.position = "right") +
+  labs(
+    title = "Change in Stress Scores: PRE vs. POST",
+    x = "Total Stress Score",
+    y = "Assessment Time"
+  )
+```

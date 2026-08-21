@@ -1,0 +1,115 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+date: "2025-09-26"
+title: "2_scale_validation"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+base_dir <- "../" # i.e. where the jekyll blog is on the hard drive.
+base_url <- "/" # keep as is
+fig_path <- "../plot_images/" #
+
+knitr::opts_knit$set(base.dir = base_dir, base.url = base_url)
+knitr::opts_chunk$set(fig.path = fig_path,
+                      cache.path = '../cache/',
+                      message=FALSE, warning=FALSE,
+                      cache = TRUE) 
+```
+
+  
+```{r}
+# Load necessary libraries
+#install.packages("psych")
+#install.packages("knitr")
+#install.packages("dplyr")
+library(psych)
+library(knitr)
+library(dplyr)
+library(readxl)
+```
+
+
+# 1. Load Data 
+```{r}
+load("../_output/stress_final.RData") #load the cleaned data from script 1
+
+check_table <- stress_final %>% select(StudyID, ends_with(
+  c("Total"#,"Mean"
+    )))
+
+check_table %>% head() %>% kableExtra::kable() %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+```
+
+```{r}
+library(ggridges)
+
+check_table %>% mutate(Split_Pre_Total = ifelse(PRE_Stress.Total > mean(PRE_Stress.Total), "High", "Low")) %>% pivot_longer(cols = PRE_Stress.Total:POST_Stress.Total, names_to = "Measure", values_to = "Value") %>% ggplot(aes(x=Value, y=Measure,fill=Split_Pre_Total))+
+  geom_density_ridges()
+```
+
+```{r}
+stress_final %>% 
+  arrange(PRE_Stress.Total) %>% 
+  mutate(
+    Rank_Order = seq_along(PRE_Stress.Total),
+    Pct_Order = percent_rank(PRE_Stress.Total)
+  ) %>% 
+  ggplot(aes(x = Rank_Order)) +
+  # 1. Add the arrows (vertical segments)
+  geom_segment(aes(
+    xend = Rank_Order, 
+    y = PRE_Stress.Total, 
+    yend = POST_Stress.Total
+  ), 
+  arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
+  color = "gray", 
+  alpha = 0.5) +
+  
+  # 2. Add the PRE points
+  geom_point(aes(y = PRE_Stress.Total, color = "PRE_Stress.Total")) +
+  
+  # 3. Add the POST points
+  geom_point(aes(y = POST_Stress.Total, color = "POST_Stress.Total")) +
+  
+  # Formatting
+  scale_color_manual(values = c("PRE_Stress.Total" = "red", "POST_Stress.Total" = "blue")) +
+  labs(
+    title = "Individual Stress Score Change (Ranked by PRE Score)",
+    x = "Participant Rank (Low to High PRE Stress)",
+    y = "Total Stress Score",
+    color = "Timepoint"
+  ) +
+  theme_minimal()
+```
+
+
+# 2. Run Cronbach’s alpha for internal consistency
+- Here we will calculate Cronbach's alpha for each scale to check for internal consistency. 
+- A general rule of thumb is that an alpha of > 0.7 is acceptable.
+
+```{r}
+pre_alpha <- stress_final %>% select(contains("PRE_Q")) %>% psych::alpha()
+post_alpha <- stress_final %>% select(contains("POST_Q")) %>% psych::alpha()
+
+## Dataframe of the Cronbach Alpha Tests and Values
+alpha_values <- data.frame(
+  Scale = c("PRE", "POST"),
+  Cronbach_Alpha = c(pre_alpha$total$raw_alpha,
+                     post_alpha$total$raw_alpha)
+)
+
+alpha_values %>% kableExtra::kable(digits=3,
+                                   caption = " Cronbach Alpha Values") %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+```

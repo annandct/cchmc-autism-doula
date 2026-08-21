@@ -1,0 +1,361 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+date: "`r Sys.Date()`"
+title: "Updated Analysis: STRESS (Perceived Stress Scale)"
+---
+
+```{r setup, include=FALSE}
+base_dir <- "../" # where output should default to
+base_url <- "" # keep as is
+fig_path <- "_plot_images/" # where image output should go
+
+knitr::opts_knit$set(base.dir = base_dir)
+knitr::opts_chunk$set(fig.path = fig_path,
+                      cache.path = 'cache/',  #log files go here
+                      message=FALSE, warning=FALSE, cache = FALSE) 
+```  
+
+
+```{r include=FALSE}
+# .base_dir <- "../" 
+# .fig_path <- "_plot_images/" 
+# 
+# knitr::opts_knit$set(base.dir = .base_dir)
+# knitr::opts_chunk$set(
+#   fig.path = .fig_path,
+#   cache.path = 'cache/', 
+#   cache = FALSE,
+#   message = FALSE, 
+#   warning = FALSE,
+#   echo = TRUE
+# )
+
+```
+
+# 0. Setup & Data Ingestion
+## 0.1 Libraries
+
+```{r}
+library(dplyr)       # Data manipulation
+library(stringr)     # String manipulation
+library(tidyr)       # Data pivoting
+library(readr)       # Reading data
+library(kableExtra)  # HTML Table formatting
+library(ggplot2)     # Visualizations
+library(ggpubr)      # Publication-ready plots
+library(rstatix)     # T-tests and effect sizes
+library(broom)       # Tidy statistical outputs
+library(forcats)     # Factor manipulation
+library(effectsize)  # effect size & omega squared
+
+#install.packages("skimr")
+#install.packages("gtExtras") # testing: used for quick summaries and viz
+```
+
+## 0.2 Load Data
+### 0.2.1 !! Updated Data File:
+- **UPDATED DATA FILE** - SEFF_Updated...
+  - Both Surveys are connected to a single participant ID (Pre and Post) and collated in one spreadsheet
+  - Transformed to numeric, scored, and saved in [Autism_Doula_Study_data_ingestion.Rmd](SEFF_Updated_Data_File_08-2026.Rmd)
+
+- **Structure**
+  - Study_ID (Joined ID across pre and post, unique to participant)
+  - Group Assignment (Control or Intervention)
+  - Stress Scale: **PSS** - *Perceived Stress Scale* - 10 Questions
+  - SEFF Scale: **EFF** - *Early Intervention Parent Self Efficacy* -  14 Questions
+  - Columns as Pre --> Post 
+
+
+## 0.3 Load Analaysis Tables
+```{r}
+analytic.files <- read_rds("../_output/analytic_files_scored_surveys.Rds")
+
+EFF.scored <- analytic.files$EFF.scored
+PSS.scored <- analytic.files$PSS.Scored
+```
+
+```{r}
+# library(gtExtras)
+# 
+# PSS.scored %>% 
+#   mutate(StudyID = factor(StudyID), Group_Assignment = factor(Group_Assignment)) %>%  
+#   select(StudyID, Group_Assignment, contains("PRE_S"), contains("POST_S")) %>% 
+#   gt_plt_summary()
+
+```
+
+# 1. PSS
+```{r}
+PSS.scored %>% select(StudyID, Group_Assignment, contains("PRE_S"), contains("POST_S")) %>%
+  kable(caption="PSS - Calculated Columns") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+## 1.1 Descriptiive Table
+```{r}
+PSS.scored %>%
+  summarise(.by = Group_Assignment, 
+            N = n(),
+            Mean_PRE = mean(PRE_Stress.Total, na.rm = TRUE),
+            SD_PRE = sd(PRE_Stress.Total, na.rm = TRUE),
+            Mean_POST = mean(POST_Stress.Total, na.rm = TRUE),
+            SD_POST = sd(POST_Stress.Total, na.rm = TRUE)
+            ) %>%
+  kable(digits = 2,
+        caption = "Summary Table - Group Means and St.Deviations") %>%
+  kable_styling(full_width = F)
+```
+
+## 1.2 Norm Table from PSS Original Study Paper
+  - Taken from the Paper, 
+  - Using **Total** Scores (Means for Demographic Groups)
+  - Compare 
+    - Study: Intervention (24) M = 16.4, SD = 6.86. (Pre Intervention)
+    - Study: Control (7) M = 14.7, SD = 7.91
+    - Race: Black (176) M = 14.7, SD = 7.2
+
+| Category | N   | Mean | S.D. |
+|---------|-----|------|------|
+| Gender<br>Male     | 926 | 12.1 | 5.9  |
+| Gender<br>Female   | 1406| 13.7 | 6.6  |
+| Age<br>18-29       | 645 | 14.2 | 6.2  |
+| Age<br>30-44       | 750 | 13.0 | 6.2  |
+| Age<br>45-54       | 285 | 12.6 | 6.1  |
+| Age<br>55-64       | 282 | 11.9 | 6.9  |
+| Age<br>65 & older  | 296 | 12.0 | 6.3  |
+| Race<br>White      | 1924| 12.8 | 6.2  |
+| Race<br>Hispanic   | 98  | 14.0 | 6.9  |
+| Race<br>Black      | 176 | 14.7 | 7.2  |
+| Race<br>Other Minority |50 | 14.1 | 5.0 |
+
+
+## 1.2 PSS - Scale Validation
+
+
+### 1.2 Item-Level Distribution (Dot Plot)
+```{r}
+PSS.scored %>% 
+  filter(Group_Assignment == "Intervention") %>% 
+  pivot_longer(cols = contains("_Q"), names_to = "Item", values_to = "Value") %>% 
+  mutate(
+    Condition = if_else(str_detect(Item, "PRE_"), "Pre-Test", "Post-Test"),
+    Condition = factor(Condition, levels = c("Pre-Test", "Post-Test")),
+    Q_Num = as.numeric(str_extract(Item, "\\d+")),
+    Q_Order = factor(Q_Num, levels = 1:10)
+    #Composite = if_else(Q_Num %in% c(1, 2, 9, 14), "Parent Competence", "Outcome Expectations")
+  ) %>% 
+  filter(!is.na(Value)) %>% 
+  ggplot(aes(x = Value, y = fct_rev(Q_Order)))+#, color = Composite)) +
+  geom_jitter(position = position_jitter(width = 0.2, height = 0.1), alpha = 0.5) +
+  stat_summary(fun = "mean", geom = "point", color = "orange", size = 2, shape = 18) +
+  facet_wrap(~Condition) +
+  scale_x_continuous(breaks = 0:4) +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  labs(
+    title = "Item-Level Distributions (Likert Scale 0 - 4 | Never - Very Often)",
+    subtitle = "Black diamond (♦) represents the item mean.",
+    y = "Question Number",
+    x = "Likert Score"
+  )
+```
+
+
+## 2. Test Internal Consistency (Cronbach's Alpha)
+- Here we will calculate Cronbach's alpha for each scale to check for internal consistency. 
+- A general rule of thumb is that an alpha of > 0.7 is acceptable.
+
+```{r}
+
+pre_alpha <- 
+  PSS.scored %>% 
+  filter(Group_Assignment == "Intervention") %>% 
+  select(contains("PRE_Q")) %>% 
+  psych::alpha()
+
+post_alpha <- 
+  PSS.scored %>% 
+  filter(Group_Assignment == "Intervention") %>% 
+  select(contains("POST_Q")) %>% 
+  psych::alpha()
+
+
+## Dataframe of the Cronbach Alpha Tests and Values
+alpha_values <- data.frame(
+  Scale = c("PRE", "POST"),
+  Cronbach_Alpha = c(pre_alpha$total$raw_alpha,
+                     post_alpha$total$raw_alpha)
+)
+
+alpha_values %>% 
+  kableExtra::kable(digits=3,
+                    caption = "Intervention Group: Cronbach Alpha Values") %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
+                            full_width = F)
+```
+
+#3. Descriptive Statistics
+
+## 3.1 Descriptive Table
+```{r}
+PSS.scored %>%
+  summarise(.by = Group_Assignment, 
+            N = n(),
+            Mean_PRE = mean(PRE_Stress.Total, na.rm = TRUE),
+            SD_PRE = sd(PRE_Stress.Total, na.rm = TRUE),
+            Mean_POST = mean(POST_Stress.Total, na.rm = TRUE),
+            SD_POST = sd(POST_Stress.Total, na.rm = TRUE)
+            ) %>%
+  kable(digits = 2,
+        caption = "Summary Table - Group Means and St.Deviations") %>%
+  kable_styling(full_width = F)
+```
+
+### 3.2.1 Outlier Identification
+```{r}
+PSS.check <- PSS.scored %>% mutate(Filter_Diff = POST_Stress.Mean - PRE_Stress.Mean)
+#Control doesn't have POST scores, so they are ignored via NA-REMOVE  
+f.mn <- mean(PSS.check$Filter_Diff, na.rm = TRUE)
+f.sd <- sd(PSS.check$Filter_Diff, na.rm = TRUE)
+
+PSS.check <- PSS.check %>% 
+  mutate(
+    Filter_Criterion = ifelse(Filter_Diff > (f.mn + 2*f.sd) | Filter_Diff < (f.mn - 2*f.sd), "Exclude", "Include")
+  )
+
+PSS.check %>% 
+  filter(Group_Assignment == "Intervention") %>% 
+  ggplot(aes(x=Filter_Diff, fill = Filter_Criterion)) + geom_histogram(bins=10, color="black") + 
+  labs(title="Distribution of Pre/Post Differences in Overall SEFF Scores", x="Difference (Post - Pre)", y="Count") +
+  theme_minimal()
+  
+```
+
+# 3.3 Run Paired T-Tests
+
+## Are the groups different initially?
+```{r}
+PSS.check %>% rstatix::t_test(PRE_Stress.Total ~ Group_Assignment, paired = FALSE, alternative = "two.sided", conf.level = 0.1)
+
+```
+
+## Does the intervention group change pre to post test?
+
+```{r}
+PSS.long <- PSS.check %>% 
+  #filter(Filter_Criterion == "Include") %>%
+  select(StudyID, Group_Assignment, contains("Mean")) %>%  
+  pivot_longer(cols = contains("Stress"), names_to = "Composite", values_to = "Score") %>% 
+  mutate(
+    Timepoint = if_else(str_detect(Composite, "PRE_"), "Pre-Test", "Post-Test"),
+    Timepoint = factor(Timepoint, levels = c("Pre-Test", "Post-Test")),
+  )
+
+# Run Paired T-Tests
+PSS.t_test_results <- PSS.long %>%
+  rstatix::pairwise_t_test(Score ~ Timepoint, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "less", pool.sd=TRUE)
+  #adjust_pvalue(method = "holm") %>%
+  #add_significance("p.adj")
+
+PSS.t_test_results
+
+
+```
+
+## One Sample Test (Against Control & Norm Mean)
+- Control Group (7) is too small to use as a reference group for the T-Test (independent sample t-test, Intervention POST vs Control PRE)
+- But Control mean (14.7) is identical to the Normed Mean for the Race: Black Demographic
+- Can test with one sample t-test against the norm value for the group.
+$$ Post Stress Total_I == 14.7 $$
+```{r}
+PSS.check %>% 
+  #filter(Filter_Criterion == "Include") %>%
+  select(StudyID, Group_Assignment, POST_Stress.Total) %>%  
+  filter(Group_Assignment == "Intervention") %>% 
+  rstatix::t_test(POST_Stress.Total ~ 1, mu = 14.7) 
+```
+- Post Stress Sample is NOT significantly different from the normed (race group) or control. 
+- Indication that the intervention may have reduced scores to where they are at least close to normal, although not large enough to account for **starting differences** (paired test) for the individuals levels. 
+
+
+# 4. Plots
+
+## Pre, Post and Control Boxplots
+```{r}
+PSS.pre_boxplot <- 
+  PSS.scored %>% 
+  #select(StudyID, Group_Assignment, contains("Total"), contains("Mean")) %>% 
+  ggplot(aes(x = Group_Assignment, y = PRE_Stress.Mean))+
+  geom_boxplot()+
+  geom_jitter()
+
+PSS.post_boxplot <- 
+  PSS.scored %>% 
+  #select(StudyID, Group_Assignment, contains("Total"), contains("Mean")) %>% 
+  ggplot(aes(x = Group_Assignment, y = POST_Stress.Mean))+
+  geom_boxplot()+
+  geom_jitter()
+
+library(patchwork)
+
+PSS.pre_boxplot + PSS.post_boxplot + plot_annotation(title = "PSS - Pre/Post Stress Scores by Group Assignment")
+
+```
+```{r}
+PSS.check %>% 
+  select(StudyID, Group_Assignment, contains("Mean"), Filter_Criterion) %>%  
+  pivot_longer(cols = contains("Stress"), names_to = "Item", values_to = "Value") %>% 
+  mutate(
+    Condition = if_else(str_detect(Item, "PRE_"), "Pre-Test", "Post-Test"),
+    Condition = factor(Condition, levels = c("Pre-Test", "Post-Test")),
+  ) %>% 
+  ggplot(aes(x = fct_rev(Item), y = Value, color = Group_Assignment, fill = Group_Assignment)) +
+  geom_boxplot(alpha = .5) +
+  geom_jitter(aes(shape = Filter_Criterion), position = position_jitter(width = 0.2, height = 0.1), alpha = 0.8)
+
+```
+
+
+## 4.1 Change in Total Scores (Arrow Plot)
+```{r}
+PSS.scored %>% 
+  arrange(PRE_Stress.Mean) %>% 
+  mutate(
+    Rank_Order = seq_along(PRE_Stress.Mean),
+    Pct_Order = percent_rank(PRE_Stress.Mean)
+  ) %>% 
+  ggplot(aes(x = Rank_Order)) +
+  # 1. Add the arrows (vertical segments)
+  geom_segment(aes(
+    xend = Rank_Order, 
+    y = PRE_Stress.Mean, 
+    yend = POST_Stress.Mean
+  ), 
+  arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
+  color = "gray", 
+  alpha = 0.5) +
+  
+  # 2. Add the PRE points
+  geom_point(aes(y = PRE_Stress.Mean, color = "PRE_Stress.Mean")) +
+  
+  # 3. Add the POST points
+  geom_point(aes(y = POST_Stress.Mean, color = "POST_Stress.Mean")) +
+  
+  # Formatting
+  scale_color_manual(values = c("PRE_Stress.Mean" = "red", "POST_Stress.Mean" = "blue")) +
+  labs(
+    title = "Individual Stress Score Change (Ranked by PRE Score)",
+    x = "Participant Rank (Low to High PRE Stress)",
+    y = "Total Stress Score",
+    color = "Timepoint"
+  ) +
+  theme_minimal()
+```
+

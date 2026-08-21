@@ -1,0 +1,472 @@
+---
+title: "SMITH-STUDY: Self-Efficacy Scale (EIPSES) Pre-Post Analysis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float: true
+    code_folding: show
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+#.base_dir <- "../" 
+#.fig_path <- "_plot_images/" 
+
+#knitr::opts_knit$set(base.dir = .base_dir)
+knitr::opts_chunk$set(
+  #fig.path = .fig_path,
+  cache.path = 'cache/', 
+  message = FALSE, 
+  warning = FALSE,
+  echo = TRUE,
+  cache = TRUE
+)
+
+```
+
+# 1. Setup & Data Ingestion
+## 1.1 Libraries
+
+```{r}
+library(dplyr)       # Data manipulation
+library(stringr)     # String manipulation
+library(tidyr)       # Data pivoting
+library(readr)       # Reading data
+library(kableExtra)  # HTML Table formatting
+library(ggplot2)     # Visualizations
+library(ggpubr)      # Publication-ready plots
+library(rstatix)     # T-tests and effect sizes
+library(broom)       # Tidy statistical outputs
+library(forcats)     # Factor manipulation
+library(effectsize)  # effect size & omega squared
+
+```
+
+## 1.2 Load Data
+```{r}
+# Read in raw dataset
+SEFF.raw <- read_csv("../_data/Self-efficacy data.csv", col_names = TRUE)
+
+# Extract and Clean Column Names
+sEFF.named <- SEFF.raw %>% 
+  rename("StudyID" = "Number assigned by study staff",
+         "PRE_SE_Score" = "Pre SE Score",
+         "POST_SE_Score" = "Post SE Score") %>% 
+  rename_with(~paste0("PRE_Q", (as.numeric(str_extract(., "\\d+$"))-1)), .cols = 2:17) %>% 
+  rename_with(~paste0("POST_Q", (as.numeric(str_extract(., "\\d+$"))-18)), .cols = 19:34) %>% 
+  mutate(across(contains("_Q"), tolower)) #ALL QUESTION TEXT tolower, because original sheet has 'Agree' and 'agree'
+
+#table(is.na(sEFF.named$StudyID)) # Check for missing StudyIDs two empty rows, for whatever reason
+sEFF.filtered <- sEFF.named %>% 
+  filter(!is.na(StudyID)) %>% # Remove rows with missing StudyIDs
+  select(-PRE_SE_Score, -POST_SE_Score) # drop unused cols from data
+
+```
+
+# 2. Scoring & Data Transformation
+
+## 2.1 Scoring Guidelines (Guimond et al., 2008):
+    - Mean/Total scores are computed by aggregating all items of the specific scale.
+    - Reverse Scored Items: 3, 5, 6, 8, 10, 12, 13, 15, 16.
+    - Parent Outcome Expectations: 3, 4, 5, 6, 7, 8, 10, 12, 15, 16.
+    - Parent Competence: 1, 2, 9, 14.
+
+```{r}
+sEFF.mutated <- sEFF.filtered %>% 
+  select(StudyID, contains("PRE_"), contains("POST_")) %>%
+  mutate(StudyID = paste0("seffID_", as.character(StudyID))) %>% 
+  
+  # 1. Convert text to numeric Likert (1-7)
+  mutate(across(contains("_Q"), ~case_match(.,
+    "strongly disagree" ~ 1,
+    "disagree" ~ 2,
+    "somewhat disagree" ~ 3,
+    "neutral" ~ 4,
+    "somewhat agree" ~ 5,
+    "agree" ~ 6,
+    "strongly agree" ~ 7,
+    .default = NA_real_
+  ))) %>% 
+  
+  # 2. Reverse Code specific items
+  mutate(across(ends_with(c("Q3", "Q5", "Q6", "Q8", "Q10", "Q12", "Q13", "Q15", "Q16")), 
+                ~ 8 - .)) %>% # Quick math trick for 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
+
+  # 3. Mean replace NAs
+  mutate(across(contains("_Q"), ~ifelse(is.na(.), mean(., na.rm = TRUE), .))) %>%
+  
+  # 4. Calculate Composite Totals
+  mutate(
+    # PRE Composites
+    PRE_Parent_Outcome_Expectations.Sum = rowSums(select(., ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+    PRE_Parent_Competence.Sum = rowSums(select(., ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
+    PRE_Overall_SEFF.Sum = rowSums(select(., contains("PRE_Q")), na.rm = TRUE),
+    
+    # POST Composites
+    POST_Parent_Outcome_Expectations.Sum = rowSums(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Competence.Sum = rowSums(select(., ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
+    POST_Overall_SEFF.Sum = rowSums(select(., contains("POST_Q")), na.rm = TRUE)
+  ) %>% 
+  # 5. Calculate Composite MEANS
+  mutate(
+    # PRE Composites
+    PRE_Parent_Outcome_Expectations.Mean = rowMeans(select(., ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+    PRE_Parent_Competence.Mean = rowMeans(select(., ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
+    PRE_Overall_SEFF.Mean = rowMeans(select(., contains("PRE_Q")), na.rm = TRUE),
+    
+    # POST Composites
+    POST_Parent_Outcome_Expectations.Mean = rowMeans(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Competence.Mean = rowMeans(select(., ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
+    POST_Overall_SEFF.Mean = rowMeans(select(., contains("POST_Q")), na.rm = TRUE)
+  ) %>% 
+  mutate(Filter_Diff = POST_Overall_SEFF.Mean - PRE_Overall_SEFF.Mean)
+
+if(is.na(sEFF.mutated) %>% sum() > 0){
+  # Check for any remaining NAs in the final scored dataset
+  print("ERROR - NA OR MISSING DATA")
+} 
+
+```
+
+## 2.2 Participant Filtering
+```{r}
+f.mn <- mean(sEFF.mutated$Filter_Diff)
+f.sd <- sd(sEFF.mutated$Filter_Diff)
+
+sEFF.clean <- sEFF.mutated %>% 
+  mutate(
+    Filter_Criterion = ifelse(Filter_Diff > (f.mn + 2*f.sd) | Filter_Diff < (f.mn - 2*f.sd), "Exclude", "Include")
+  )
+
+sEFF.clean %>% ggplot(aes(x=Filter_Diff, fill = Filter_Criterion)) + geom_histogram(bins=10, color="black") + 
+  labs(title="Distribution of Pre/Post Differences in Overall SEFF Scores", x="Difference (Post - Pre)", y="Count") +
+  theme_minimal()
+
+```
+## 2.3 Final Data Filtering
+- Filter to only the "Include" participants
+- Save Data
+```{r}
+sEFF.clean <- sEFF.clean %>% filter(Filter_Criterion == "Include")
+save(sEFF.clean, file = "../_data/sEFF_cleaned.RData")
+```
+
+```{r}
+load(file = "../_data/sEFF_cleaned.RData", verbose=TRUE)
+
+# Preview final scored data
+sEFF.clean %>% 
+  select(StudyID, ends_with(c(".Sum",".Mean"))) %>% 
+  #head(5) %>% 
+  kable(caption="Sample of Calculated Composite Scores") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+```
+
+
+
+
+# 3. Descriptive Statistics
+## 3.1 Long Format Data for Breakout Testing 
+```{r}
+df_long <- sEFF.clean %>%
+  #filter(Filter_Criterion == "Include") %>% 
+  select(StudyID, ends_with(c(".Sum",".Mean"))) %>%
+  pivot_longer(cols = -StudyID, names_to = "Variable", values_to = "Score") %>% 
+  separate(Variable, into = c("Condition", "Composite_Type"), sep = "_", extra = "merge") %>% 
+  separate(Composite_Type, into = c("Composite_Type", "Calculation"), sep = "\\.", extra = "merge") #%>% 
+  #mutate(Cond_Fact = factor(Condition, levels = c("PRE", "POST")),
+         #Cond_NUM = ifelse(Condition=="PRE", 0, 1))
+```
+
+## 3.1 Descriptive Calculations and Table
+```{r}
+# Calculate Descriptives
+comp_descrip <- df_long %>% 
+  filter(Calculation == "Mean") %>%
+  group_by(Condition, Composite_Type) %>% 
+  summarize(
+    N = n(),
+    Missing = sum(Score==0),
+    Mean = mean(Score, na.rm=TRUE),
+    SD = sd(Score, na.rm=TRUE),
+    Min = min(Score, na.rm=TRUE),
+    Max = max(Score, na.rm=TRUE),
+    .groups = "drop"
+  )
+  
+```
+
+```{r}
+comp_descrip %>% 
+  kable(caption = "Descriptive Statistics for All Scales", digits = 2) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+```
+
+# 4. Statistical Tests (Pre vs. Post Comparisons)
+
+## 4.1 Paired T-Tests & Effect Sizes
+- We compare the Pre-test and Post-test scores for each of the three composites to observe absolute changes in self-efficacy.
+- `rstatix` used; mirrors the calculations for SPSS
+
+```{r}
+library(rstatix)
+
+# Run Paired T-Tests
+t_test_results <- df_long %>%
+  filter(Calculation == "Mean") %>%
+  group_by(Composite_Type) %>%
+  rstatix::pairwise_t_test(Score ~ Condition, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "greater", pool.sd=TRUE) %>% 
+  adjust_pvalue(method = "holm") %>%
+  add_significance("p.adj")
+
+# Calculate Cohen's d for Effect Size
+cohens_d_results <- df_long %>%
+  filter(Calculation == "Mean") %>%
+  group_by(Composite_Type) %>%
+  rstatix::cohens_d(Score ~ Condition, paired = TRUE)
+
+# Combine for final table
+t_test_final <- t_test_results %>%
+  left_join(select(cohens_d_results, Composite_Type, effsize, magnitude), by = "Composite_Type") %>%
+  select(Composite_Type, statistic, df, p, p.adj, p.adj.signif, effsize, magnitude)
+
+t_test_final %>% 
+  kable(caption = "Paired T-Test Results (Mean: Pre vs. Post)", digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = T)
+```
+
+## 4.2 Pairwise Plots
+```{r}
+library(ggpubr)
+
+# Pairwise paired t-tests, positioned for the brackets
+pwc_seff <- df_long %>% 
+  mutate(StudyID = factor(StudyID)) %>% 
+  filter(Calculation == "Mean") %>%
+  group_by(Composite_Type) %>%
+  pairwise_t_test(Score ~ Condition, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "greater") %>%
+  add_xy_position(x= "Condition")
+
+# AOV results
+res.aov <- 
+  df_long %>% 
+  mutate(StudyID = factor(StudyID)) %>% 
+  filter(Calculation == "Mean") %>% # =="Overall_SEFF") %>% 
+  group_by(Composite_Type) %>% 
+  anova_test(Score ~ Condition + Error(StudyID/Condition))
+
+# ggpubr plot
+df_long %>% 
+  mutate(StudyID = factor(StudyID)) %>% 
+  filter(Calculation == "Mean") %>%
+  ggboxplot(x = "Condition", y = "Score", fill = "Condition", palette = "jco",
+          xlab = "Time point", ylab = "Self-Efficacy Mean Score")+
+  facet_wrap(~Composite_Type)
+  #stat_pvalue_manual(pwc_seff, hide.ns = TRUE, tip.length = 0.01)+
+  #labs(subtitle = get_test_label(res.aov, detailed = TRUE))
+```
+
+
+## 4.2 ANOVA 
+
+- To evaluate the effect of the intervention while strictly controlling for the participants' baseline starting point, an ANOVA is run for each composite.
+- CTA:: I was testing this, but ultimately I do not believe it is necessary, without three timepoints, running the ANOVA reduces to a t-test. The *slight* difference in the F and T statistics come from adjustments based on Sphericity (is variance equal across groups) or other factors.
+  - This is also where the **poster** error came, the code was structured correctly, but I did not specify the sum/mean selection (used both) therefore there was a 'doubling' of data, and the effectsize also exploded. 
+- Will follow-up with potential improvements, if possible. 
+
+### Error Version
+```{r}
+# Run ANOVA, get Table. 
+results.ANCOVA <- sEFF.clean %>%
+  rstatix::anova_test(POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean)
+
+get_anova_table(results.ANCOVA, correction = "auto") %>% 
+  kable(caption = "Error: Used the test statistic, which is functionally `does Pre-test predict Post-test'") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+```
+
+### "Correct" Version (Approximates T-Test) Grouped ANOVA Tests
+- In this test, Score is predicted by Condition (Pre/Post) with an additional Error Term for Participant (StudyID) in a given Condition (Pre/Post)
+- In this case however, an additional degree of freedom is being used for the error term, and then the 'ges' (genrealized effect size) is calculated between Condition - the StudyID difference effects.
+  - Note, the p-values are identical to the t-test (adjusted) p-values. 
+  - The effect size is diminished (different effect calculation) - which mostly implies "there was a lot of participant variation")
+  - See charts below to visualize the direct changes. 
+  
+```{r}
+results.aov <- df_long %>% 
+  filter(Calculation == "Mean") %>%
+  group_by(Composite_Type) %>% 
+  rstatix::anova_test(Score ~ Condition + Error(StudyID/Condition))
+
+
+get_anova_table(results.aov, correction = "auto") %>% 
+  kable(caption = "ANCOVA Results (Controlling for Baseline Pre-Scores)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+```
+
+
+## 4.4 Results & Preliminary Effectiveness
+
+### Poster Snippets:
+#### High Acceptability & Culturally Matched Support (From Poster)
+    - Qualitative feedback indicates the Autism Doula program was highly accepted by families. Caregivers highlighted the soft, comforting, and highly resourceful nature of the support.
+    - "I loved how my autism doula felt more like a friend than a therapist... anytime I needed information on anything! I could ask her & she'd find an answer for me." — Parent Participant
+
+#### Quantitative Findings: Parent Self-Efficacy (From Stats Above)
+  - **Simple Pre/Post Changes:** Initial paired t-tests assessed whether the program resulted in increased mean score changes. For the included study sample (22 participants), 
+  - Overall Self-Efficacy shows a statistically significant increase at alpha = 0.1, and Parent Outcome Expectations at 0.05. 
+    - The Cohen's d effect size for Overall SEFF was *small*, and the Parent Outcome Expectations was *moderate*. 
+
+```{r}
+t_test_final %>% 
+  kable(caption = "Paired T-Test Results (Mean: Pre vs. Post)", digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = T)
+```
+
+
+## 4.5 Interpretation & Impact: 
+  - There were measured EPISES changes on both ends of the scale, up and down, some quite large; the most extreme scores (balanced) were excluded from the core analysis.
+  - It is possible that this sample was not large enough to resolve the variance in baseline scores, and that a larger sample size would have yielded more statistically significant results.
+  - While this is *often* a claim (we need more participants) in the cases of the EIPSES scale, this may be particularly acute when utilizing this scale within a distinctly difference ethnicity group than that of the original scale construction, 
+
+#### Quoted from the paper:
+  *"Group differences were found across ethnicity subgroups for the Parent Outcome Expectations subscale. Tests of mean differences using a Bonferonni procedure revealed a statistically significant mean difference between Hispanic and White caregivers such that White caregivers rated themselves as having higher mean levels of outcome expectations efficacy than Hispanic caregivers (p < .01, d = .57). This effect was medium in size according to Cohen’s (1988, 1992) effect size conventions."* **Guimond et al. / Early Intervention Scale 311**
+  
+  - The paper also reported differences according to additional factors, such as SES and Education Status.
+  - My interpretation of the paper, is that it did not have any other large enough sub samples, (most relevantly in this case, of Black / African-American participants) to assess whether there would be statistically significant differences. 
+  - The overall approach of measuring Self-Efficacy and particularly outcomes & expectations for families caring for individuals with clinical diagnoses likely requires additional investigation to incorporate this cultural lens and ensure efficacy of this scale to the study sample. 
+
+## 5. Visualizations
+### 5.1 Pre vs. Post Boxplots (All Composites)
+
+```{r}
+df_long %>%
+  filter(Calculation == "Mean",
+         ) %>% 
+  mutate(Composite_Type = str_replace_all(Composite_Type, "_", " ")) %>%
+  ggboxplot(
+    x = "Condition", y = "Score",
+    color = "Condition", palette = "jco",
+    add = "jitter",
+    facet.by = "Composite_Type",
+    short.panel.labs = TRUE
+  ) +
+  labs(
+    title = "Composite Scores: Pre-Test vs. Post-Test",
+    x = "Timepoint",
+    y = "Mean Score"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+### 5.2 Baseline Regression Plots (ANOVA Visualized)
+
+```{r}
+p1 <- sEFF.mutated %>% 
+  ggplot(aes(x = PRE_Overall_SEFF.Mean, y = POST_Overall_SEFF.Mean)) +
+  geom_jitter(color = "steelblue", width = 0.5, height = 0.5) +
+  geom_smooth(method = "lm", color = "darkred") +
+  labs(title = "Overall SEFF", x = "Pre-Test", y = "Post-Test") +
+  theme_minimal()
+
+p2 <- sEFF.mutated %>% 
+  ggplot(aes(x = PRE_Parent_Outcome_Expectations.Mean, y = POST_Parent_Outcome_Expectations.Mean)) +
+  geom_jitter(color = "steelblue", width = 0.5, height = 0.5) +
+  geom_smooth(method = "lm", color = "darkred") +
+  labs(title = "Outcome Expectations", x = "Pre-Test", y = "") +
+  theme_minimal()
+
+p3 <- sEFF.mutated %>% 
+  ggplot(aes(x = PRE_Parent_Competence.Mean, y = POST_Parent_Competence.Mean)) +
+  geom_jitter(color = "steelblue", width = 0.5, height = 0.5) +
+  geom_smooth(method = "lm", color = "darkred") +
+  labs(title = "Parent Competence", x = "Pre-Test", y = "") +
+  theme_minimal()
+
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+
+```
+
+### 5.3 Item-Level Distribution (Dot Plot)
+
+```{r}
+sEFF.mutated %>% 
+  pivot_longer(cols = contains("_Q"), names_to = "Item", values_to = "Value") %>% 
+  mutate(
+    Condition = if_else(str_detect(Item, "PRE_"), "Pre-Test", "Post-Test"),
+    Condition = factor(Condition, levels = c("Pre-Test", "Post-Test")),
+    Q_Num = as.numeric(str_extract(Item, "\\d+")),
+    Q_Order = factor(Q_Num, levels = 1:16),
+    Composite = if_else(Q_Num %in% c(1, 2, 9, 14), "Parent Competence", "Outcome Expectations")
+  ) %>% 
+  filter(!is.na(Value)) %>% 
+  ggplot(aes(x = Value, y = fct_rev(Q_Order), color = Composite)) +
+  geom_jitter(position = position_jitter(width = 0.2, height = 0.1), alpha = 0.5) +
+  stat_summary(fun = "mean", geom = "point", color = "black", size = 2, shape = 18) +
+  facet_wrap(~Condition) +
+  scale_x_continuous(breaks = 1:7) +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  labs(
+    title = "Item-Level Distributions (Likert 1-7)",
+    subtitle = "Black diamond (♦) represents the item mean.",
+    y = "Question Number",
+    x = "Likert Score"
+  )
+```
+
+### 5.4 Invidiual Score Changes (Mean)
+```{r}
+sEFF.clean %>% 
+  arrange(PRE_Overall_SEFF.Mean) %>%
+  mutate(
+    Rank_Order = seq_along(PRE_Overall_SEFF.Mean),
+    Pct_Order = percent_rank(PRE_Overall_SEFF.Mean)
+  ) %>% 
+  ggplot(aes(x = Rank_Order, shape=Filter_Criterion)) +
+  # 1. Add the arrows (vertical segments)
+  geom_segment(aes(
+    xend = Rank_Order, 
+    y = PRE_Overall_SEFF.Mean, 
+    yend = POST_Overall_SEFF.Mean
+  ), 
+  arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
+  color = "gray", 
+  alpha = 0.5) +
+  
+  # 2. Add the PRE points
+  geom_point(aes(y = PRE_Overall_SEFF.Mean, color = "PRE_Overall_SEFF.Mean")) +
+  
+  # 3. Add the POST points
+  geom_point(aes(y = POST_Overall_SEFF.Mean, color = "POST_Overall_SEFF.Mean")) +
+  
+  # Formatting
+  scale_color_manual(values = c("PRE_Overall_SEFF.Mean" = "red", "POST_Overall_SEFF.Mean" = "blue")) +
+  labs(
+    title = "Individual SEFF Score Change (Ranked by PRE Score)",
+    x = "Participant Rank (Low to High PRE SEFF)",
+    y = "Mean SEFF Score",
+    color = "Timepoint"
+  ) +
+  theme_minimal()
+```
+
+
+# Appendix
+**CTA STATS NOTES:**
+  - Mean replacement used for one participant response (entered as "strongly" - replaced with mean)
+  - CEILING EFFECT --> Lots of mid to high scores; probably need more 'upper range' on the data (happens very often in surveys) participants tend to answer on the extremes, but not THE highest/lowest value.
+  
+```{r}
+#check all unique strings in questions
+uniques <- sEFF.named %>% select(contains("_Q")) %>% 
+  summarise(across(everything(), ~list(unique(.)))) %>% 
+  pivot_longer(everything(), names_to = "Question", values_to = "Unique_Responses") %>% 
+  unnest(cols = c(Unique_Responses))
+
+table(uniques$Unique_Responses) %>% kable(caption="All survey text items, extraced for consistency check") %>% 
+  kable_styling(full_width = F)
+```

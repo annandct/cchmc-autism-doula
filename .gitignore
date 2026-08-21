@@ -7,9 +7,6 @@
 cchmc-autism-doula.Rproj
 
 #original data folders
-*_Rscripts/
 /cache
-
-*_cache/
 *_data/
 _paper/

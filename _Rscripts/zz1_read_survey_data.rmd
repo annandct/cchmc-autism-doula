@@ -1,0 +1,478 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+    number_sections: true
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+date: "2025-09-18"
+title: "1_read_survey_data"
+---
+
+```{r setup, include=FALSE}
+.base_dir <- "../" # where output should default to
+.base_url <- "" # keep as is
+.fig_path <- "plot_images/" # where image output should go
+
+knitr::opts_knit$set(base.dir = .base_dir)
+knitr::opts_chunk$set(fig.path = .fig_path,
+                      cache.path = '../cache/',  #log files go here
+                      message=FALSE, warning=FALSE,
+                      cache = TRUE) 
+```  
+
+# 0. Setup
+
+## 0.1 Libraries/Packages
+```{r}
+#load packages
+#library(readxl) #to read in data
+library(dplyr) #for manipulating data, using PIPES %>% for easier readability
+library(stringr)
+library(tidyr) #pivoting and manipulating data, structuring data for output
+library(readxl) #for reading in data)
+library(kableExtra)
+# #formatting
+# #library(tableone) #make APA style tables for publication
+# library(jtools) #APA format - theme
+# library(ggplot2) #tailored graphs/charts & data viz for exploration
+# #library(patchwork) #for combining ggplot2 charts
+# #library(moments) #for skewness and kurtosis calculations
+# #library(lme4) #used for mixed effects regression - not currently needed
+```
+
+# 0.1 Load Data into R
+```{r}
+data_files <- list.files("../_data")
+data_files
+```
+- How does the data read in, can we use columns or does it need parsing?
+```{r}
+
+fpath <- "../_data/S1_Post -  AFTER Learning Activities_January 11, 2026_19.34.csv"
+
+
+multi_header_read <- function(fpath){
+  #questions <- raw_data[1,]#data comes in with QUESTION SUBLABEL/INSTRUCTIONS as FIRST ROW
+  
+  #CSV  filetype 
+  if(grepl("\\.csv$", fpath)){
+    raw_data <- readr::read_csv(file = fpath, col_names = TRUE)
+    value_data <- readr::read_csv(file = fpath, col_names = names(raw_data), skip = 3)
+    return(value_data)
+    }
+  #EXCEL
+  if(grepl("\\.xlsx$", fpath)){
+    raw_data <- readxl::read_excel(path = fpath, col_names = TRUE) #read in the raw survey data
+    value_data <- readxl::read_excel(path = fpath, col_names = names(raw_data),skip = 2) #read and skip first row
+  return(value_data)
+  }
+}
+
+pulse1 <- multi_header_read("../_data/PULSE Survey_November 3, 2025_18.24.xlsx")
+
+#glimpse(pulse1)
+```
+
+```{r functions for names & cleaning}
+clean_names <- function(data.table){
+  output.table <- data.table %>% rename_all(~gsub(" ", "_", .)) %>% 
+  #replace spaces in colnames with underscores
+  rename_all(~gsub("[^[:alnum:]_]", "", .)) 
+  #remove special characters from column names
+  return(output.table)
+  #returns table
+  }
+
+pulse1 %>% 
+  filter(DistributionChannel=="preview") %>% clean_names() %>% 
+  head() %>% 
+  kable(caption="Example Output with Cleaned Names") %>% 
+  kable_styling(full_width = F)
+```
+
+# 1. Data Cleaning and Preparation
+```{r}
+# read files and name them from the filenames
+library(dplyr)
+RAWinfo <- multi_header_read("../_data/Information Sheet - AI and Language Learning Survey_November 3, 2025_18.20.xlsx") %>% clean_names()
+RAWpre <- multi_header_read("../_data/S1_Pre - BEFORE Learning Activities_November 3, 2025_18.23.xlsx") %>% clean_names()
+#RAWpost <- multi_header_read("../_data/S1_Post -  AFTER Learning Activities_November 3, 2025_18.24.xlsx") %>% clean_names()
+RAWpost <- multi_header_read("../_data/S1_Post -  AFTER Learning Activities_January 11, 2026_19.34.csv") %>% clean_names()
+RAWpulse <- multi_header_read("../_data/PULSE Survey_November 3, 2025_18.24.xlsx") %>% clean_names()
+```
+
+### functions
+```{r}
+likert_to_num <- function(x) {
+  case_when(
+    x == "Strongly disagree" ~ 1,
+    x == "Disagree" ~ 2,
+    x == "Somewhat disagree" ~ 2, # Mapping somewhat to 2 or 3 depending on scale, assuming 5 point standard
+    x == "Neither agree nor disagree" ~ 3,
+    x == "Neither disagree nor agree" ~ 3, # Handle variation
+    x == "Somewhat agree" ~ 4,
+    x == "Agree" ~ 4,
+    x == "Strongly agree" ~ 5,
+    TRUE ~ NA_real_
+  )
+}
+```
+
+
+## PRE-TEST
+#### Structure of PreTest
+| Section | Original Pattern | New Name Example |
+| :--- | :--- | :--- |
+| **S-FLES (9 Likert)** | `Q1SFLES13_1` ... `Q3SFLES79_3` | `SFLES_1` ... `SFLES_9` |
+| **Cultural Context (Part 1)** | `Q1_1` ... `Q1_4` | `Culture_1` ... `Culture_4` |
+| **Cultural Context (Part 2)** | `Q2_134` ... `Q2_437` | `Culture_5` ... `Culture_8` |
+| **AI Experience (Likert)** | `Q4_1` ... `Q4_5` | `AI_L_1` ... `AI_L_5` |
+| **AI Experience (Categorical)** | `Q1`, `Q2_5`, `Q3` | `AI_Cat_1`, `AI_Cat_2`, `AI_Cat_3` |
+| **AI Experience (Open Text)** | `Q2_6_TEXT`, `Q3_6_TEXT` | `AI_Text_1`, `AI_Text_2` |
+
+```{r}
+#filter
+f.pre <- RAWpre %>% filter(Status != "Survey Preview",
+                           Finished =='True')
+  #renamte, select needed columns
+
+cat("Start:", nrow(RAWpre), "\n",
+    "Filtered:", nrow(RAWpre) - nrow(f.pre), "total rows", "\n",
+    "Final:", nrow(f.pre))
+```
+
+```{r}
+#select, mutate, aggregate (scores)
+s.pre <- f.pre %>% 
+  select(
+    Email = Validation_1,
+    Passphrase = Validation_2,
+    ResponseId,
+    Group = GroupSelect,
+    #Questions
+    Q1SFLES13_1:Q4_5)
+
+
+## mutate!!!
+
+m.pre <- s.pre %>%
+  mutate_at(vars(Q1SFLES13_1:Q2_437), likert_to_num) %>% 
+  mutate_at(vars(Q4_1:Q4_5), likert_to_num) %>% 
+  mutate(across(ends_with("TEXT"), ~na_if(., "-99"))) %>%  #remove "-99" values in TEXT
+  
+  mutate_at(vars(Q1SFLES13_1:Q2_437), as.numeric) %>%
+  mutate_at(vars(Q4_1:Q4_5), as.numeric)
+
+# 1. Get names of numeric columns
+numeric_cols <- m.pre %>% select(where(is.numeric)) %>% names()
+text_cols <- m.pre %>% select(where(is.character)) %>% names()
+# 2. Filter these names based on pattern matching and apply renaming
+
+df_pre <- m.pre %>%
+  # Rename SFLES items (Q1SFLES13_1 -> SFLES_1, etc.)
+    #rename_with(~str_replace(., "Q1SFLES13", "SF.A"), contains("SFLES")) %>%
+    #rename_with(~str_replace(., "Q2SFLES46", "SF.B"), contains("SFLES")) %>%
+    #rename_with(~str_replace(., "Q3SFLES79", "SF.C"), contains("SFLES"))
+  rename_with(~paste0("Pre_SFLES_", 1:3), matches("Q1SFLES13")) %>% 
+  rename_with(~paste0("Pre_SFLES_", 4:6), matches("Q2SFLES46")) %>% 
+  rename_with(~paste0("Pre_SFLES_", 7:9), matches("Q3SFLES79")) %>% 
+  # Rename first set of Cultural items (Q1_1 -> Culture_1)
+  rename_with(~str_replace(., "Q1_", "Pre_Culture_"), starts_with("Q1_")) %>% 
+  # Rename second set of Cultural items (Q2_134 -> Culture_5, etc.)
+  rename_with(~paste0("Pre_Culture_", 5:8), .cols = intersect(numeric_cols, names(select(m.pre, matches("Q2_\\d{3}"))))) %>% 
+  # Rename AI Experience Items
+  rename_with(~paste0("Pre_AI.EXP_", c(1,2,3,4,5,6,"6T",7,"7T",8)), .cols = intersect(text_cols, names(select(m.pre, matches("Q\\d{1}"))))) %>% 
+  # Rename AI Likert items (Q4_1 -> AI_L_1)
+  rename_with(~str_replace(., "Q4_", "Pre_AI_L_"), starts_with("Q4_")) %>% 
+  # calculate scores..
+  rowwise() %>%
+  mutate(Pre_FLE_Total = sum(c_across(starts_with("Pre_SFLES")), na.rm = FALSE),
+         Pre_FLE_Mean = mean(c_across(starts_with("Pre_SFLES")), na.rm = FALSE),
+         Pre_CRE_Total = sum(c_across(starts_with("Pre_CRE")), na.rm = FALSE),
+         Pre_CRE_Mean = mean(c_across(starts_with("Pre_CRE")), na.rm = FALSE),
+         Pre_AI_L_Total = sum(c_across(starts_with("Pre_AI_L")), na.rm = FALSE),
+         Pre_AI_L_Mean = mean(c_across(starts_with("Pre_AI_L")), na.rm = FALSE)
+         #Pre_AI.EXP_Total = sum(c_across(starts_with("Pre_AI.EXP_") %>% select(where(is.numeric))), na.rm = FALSE),
+         #Pre_AI.EXP_Mean = mean(c_across(starts_with("Pre_AI.EXP_") %>% select(where(is.numeric))), na.rm = FALSE),
+         ) %>%
+  ungroup()
+
+#add to writing list
+write_to_list <- list("PRETEST_results" = df_pre)
+```
+
+## POST
+```{r}
+f.post <- RAWpost %>% filter(DistributionChannel != "preview",
+                           Progress == 100)
+
+cat("Start:", nrow(RAWpost), "\n",
+    "Filtered:", nrow(RAWpost) - nrow(f.post), "total rows", "\n",
+    "Final:", nrow(f.post))
+#glimpse(f.post)
+```
+
+```{r}
+#select, mutate, aggregate scores
+
+df_post <-
+  f.post %>% 
+  select(
+    Email = Validation_1,
+    Passphrase = Validation_2,
+    ResponseId,
+    Group = `2ClassGroupmatch`,
+    AI_Activity,
+    #Questions
+    Q1_1:Q5TAMUsing1013_4) %>% 
+  mutate_at(vars(Q1_1:Q5TAMUsing1013_4), likert_to_num) %>% 
+  mutate_at(vars(Q1_1:Q5TAMUsing1013_4), as.numeric) %>% 
+  rename_with(~paste0("Post_SFLES_", 1:3), matches("Q1_")) %>% 
+  rename_with(~paste0("Post_SFLES_", 4:6), matches("Q2_")) %>% 
+  rename_with(~paste0("Post_SFLES_", 7:9), matches("Q3_")) %>% 
+  rename_with(~str_replace(., "Q4TAMEase\\d{2}_", "Post_TAM.Ease_"), starts_with("Q4TAM")) %>% 
+  rename_with(~str_replace(., "Q5TAMUseful\\d{2}_", "Post_TAM.Useful_"), starts_with("Q5TAM")) %>% 
+  rename_with(~str_replace(., "Q5TAMUsing\\d{4}_", "Post_TAM.Attitude_"), starts_with("Q5TAM")) %>% 
+  #calculate scores
+  rowwise() %>%
+  mutate(
+    Post_FLE_Total = sum(c_across(starts_with("Post_SFLES")), na.rm = FALSE),
+    Post_FLE_Mean = mean(c_across(starts_with("Post_SFLES")), na.rm = FALSE),
+    Post_TAM_EOU_Mean = mean(c_across(starts_with("Post_TAM.Ease_")), na.rm = FALSE),
+    Post_TAM_U_Mean = mean(c_across(starts_with("Post_TAM.Useful_")), na.rm = FALSE),
+    Post_TAM_ATT_Mean = mean(c_across(starts_with("Post_TAM.Attitude_")), na.rm = FALSE)
+  ) %>%
+  ungroup()
+
+#add to write list
+write_to_list$post_coded <- df_post
+```
+
+```{r}
+df_post %>% 
+  select(starts_with("Post_")) %>% 
+  head() %>% 
+  kable(caption="Post Test Coded Data Sample") %>% 
+  kable_styling(full_width = F)
+```
+
+
+
+## Pulse
+- Pulse Survey used the same **distribution link** each time. 
+- Each Participant ID (or Email, or Mask) can be used as a **group**. 
+- And a sequence (Session) created for each occurence. 
+- Protocol: Pulse is given **three times**.
+
+```{r}
+
+f.pulse <- RAWpulse %>% filter(Status != "Survey Preview",
+                           Finished =='True')
+
+cat("Start:", nrow(RAWpulse), "\n",
+    "Filtered", nrow(RAWpulse) - nrow(f.pulse),"total rows", "\n",
+    "Final:", nrow(f.pulse))
+glimpse(f.pulse)
+```
+
+
+### Code Pulse
+
+```{r}
+#unique(f.pulse$Activity_Number)
+
+Activity_Recode <- function(x){
+  case_when(
+    str_detect(string=x, pattern = "Speaking") == TRUE ~ "Speaking_Activity",
+    str_detect(string=x, pattern = "Writing") == TRUE ~ "Writing_Activity",
+    str_detect(string=x, pattern = "Vocab") == TRUE ~ "Vocabulary_Activity",
+    TRUE ~ as.character(x)
+  )
+}
+
+
+s.pulse <- f.pulse %>% 
+  select(
+    Email = Validationemail_1,
+    Passphrase = Validationemail_2,
+    ResponseId,
+    Group_Number = Group_Number,
+    QConditionAI,
+    Activity_Number,
+    Q1CoreAI_1:Q1CoreAI_7,
+    Q1Core_1:Q1Core_5,
+    AIGraded = AIGradeRatomg,
+    AIGrade_TEXT = AIGradeRatomg_1_TEXT
+  )
+```
+
+```{r}
+m.pulse <- s.pulse %>% 
+  #select(everything()) %>% 
+  mutate(Activity_Type = Activity_Recode(Activity_Number)) %>%
+  mutate_at(vars(Q1CoreAI_1:Q1Core_5), likert_to_num) %>% 
+  mutate_at(vars(Q1CoreAI_1:Q1Core_5), as.numeric) %>% 
+  mutate(across(ends_with("TEXT"), ~na_if(., "-99"))) %>%  #remove "-99" values in TEXT
+  mutate(QConditionAI = ifelse(startsWith(QConditionAI, "Yes"), "AI_Group", "Control")) %>%
+  rowwise() %>% 
+  mutate(FILTER_VAR = ifelse(
+    any(!is.na(across(Q1CoreAI_1:Q1Core_5))), "KEEP", "DROP") #if all values in Q1CoreAI_1:Q1Core_5 are NA, make filter variable "ISSUE_DROP_NAS"
+         ) %>% ungroup()
+
+m2.pulse <- m.pulse %>% filter(FILTER_VAR=="KEEP")
+cat("Rows dropped due to all NAs in core items:", nrow(m.pulse) - nrow(m2.pulse), "\n",
+    "Final Rows in Pulse Data:", nrow(m2.pulse))
+
+#Participant filled out GROUP wrong, manual recode of Q1CORE_AI ->Q1Core
+m2.pulse[m2.pulse$ResponseId=="R_2pJtouk5uyUauWt", "QConditionAI"] <- "Control"
+m2.pulse[m2.pulse$ResponseId=="R_2pJtouk5uyUauWt", c("Q1Core_1", "Q1Core_2","Q1Core_3","Q1Core_4","Q1Core_5")] <- m2.pulse[m2.pulse$ResponseId=="R_2pJtouk5uyUauWt", c("Q1CoreAI_1", "Q1CoreAI_2","Q1CoreAI_3","Q1CoreAI_4","Q1CoreAI_5")]
+m2.pulse[m2.pulse$ResponseId=="R_2pJtouk5uyUauWt", c("Q1CoreAI_1", "Q1CoreAI_2","Q1CoreAI_3","Q1CoreAI_4","Q1CoreAI_5","Q1CoreAI_6","Q1CoreAI_7", "AIGraded")] <- NA
+```
+
+```{r}
+df_pulse <- m2.pulse %>% 
+  group_by(Email) %>%
+  mutate(Session = seq_along(Email)) %>%
+  ungroup() %>% 
+  group_by(Session) %>% 
+  rowwise() %>%
+  mutate(
+    Pulse_CoreAI_Total = sum(c_across(starts_with("Q1CoreAI_")), na.rm = FALSE),
+    Pulse_CoreAI_Mean = mean(c_across(starts_with("Q1CoreAI_")), na.rm = FALSE),
+    Pulse_Core_Total = sum(c_across(starts_with("Q1Core_")), na.rm = FALSE),
+    Pulse_Core_Mean = mean(c_across(starts_with("Q1Core_")), na.rm = FALSE)
+  ) %>%
+  ungroup() %>% 
+  filter(Session < 4)
+  
+
+
+## MULTIPLE SESSSIONS DATA!
+# 
+# emails <- df_pulse %>% filter(Session > 3) %>% select(Email) %>% distinct() %>% unlist()
+# 
+# probs <- df_pulse %>% filter(Email %in% emails) %>% arrange(QConditionAI, Group_Number)
+# View(probs)
+write_to_list$pulse_CODED <- df_pulse
+```
+
+```{r}
+df_pulse %>% filter(QConditionAI=="AI_Group") %>%
+  select(starts_with("Pulse_"), Session) %>% 
+  head() %>% 
+  kable(caption="Pulse Coded Data Sample") %>% 
+  kable_styling(full_width = F)
+```
+
+```{r}
+df_pulse %>% filter(QConditionAI=="Control") %>%
+  select(starts_with("Pulse_"), Session) %>% 
+  head() %>% 
+  kable(caption="Pulse Coded Data Sample") %>% 
+  kable_styling(full_width = F)
+```
+
+
+# Joining and COnditions
+
+```{r}
+df_main <- full_join(df_pre, df_post, by = "Email", suffix = c("_Pre", "_Post"))
+
+# Consolidate Group variable (Prioritize Pre, then Post)
+df_main <- df_main %>%
+  mutate(Group = coalesce(Group_Pre, Group_Post)) %>%
+  select(-Group_Pre, -Group_Post)
+
+# 2. Add Condition (Infer from Group ID or Pulse data)
+# *Logic*: If student reported using AI in Pulse, they are AI group. 
+# We need to create a mapping based on the majority report per group to be safe.
+
+condition_map <- df_pulse %>%
+  filter(!is.na(Group_Number)) # Pulse didn't have group easily accessible in select? 
+  # Actually Pulse has "Group_Number" in raw. Let's grab it if possible, 
+  # but reliance on Email join is safer.
+
+# Join Pulse condition info to Main to confirm assignment
+pulse_cond_summary <- df_pulse %>%
+  left_join(select(df_main, Email, Group), by="Email") %>%
+  group_by(Group) %>%
+  summarize(
+    AI_Count = sum(str_detect(QConditionAI, "AI"), na.rm=TRUE),
+    Trad_Count = sum(str_detect(QConditionAI, "Control"), na.rm=TRUE)
+  ) %>%
+  mutate(Condition = if_else(AI_Count > Trad_Count, "AI", "Traditional"))
+
+pulse_cond_summary %>% 
+  kable(caption="Condition Assignment Summary by Group") %>% 
+  kable_styling(full_width = F)
+```
+
+```{r}
+# Apply Condition to Main
+df_main <- df_main %>%
+  left_join(select(pulse_cond_summary, Group, Condition), by = "Group")
+
+# Anonymize
+df_main <- df_main %>%
+  mutate(Participant_ID = paste0("P", row_number()))
+
+# create separate df with email and id for joining later
+df_main_match_id_email <- df_main %>% select(Email, Participant_ID)
+
+
+# DROP EMAIL FROM ALL DATA
+df_pre <- df_pre %>%
+  left_join(df_main_match_id_email, by="Email") %>%
+  select(Participant_ID, everything(), -Email)
+
+df_post <- df_post %>%
+  left_join(df_main_match_id_email, by="Email") %>%
+  select(Participant_ID, everything(), -Email)
+
+#drop email
+df_main <- df_main %>% select(Participant_ID, Condition, everything(), -Email)
+
+# Add IDs to Pulse
+df_pulse <- df_pulse %>%
+  left_join(df_main_match_id_email, by="Email") %>% 
+  select(Participant_ID, everything(), -Email) %>%
+  filter(!is.na(Participant_ID)) # Remove pulse entries that don't match main list
+```
+
+```{r}
+#final list, R data and write to xlsx
+write_to_list <- list(
+  "MAIN_CLEANED" = df_main,
+  "PULSE_CLEANED" = df_pulse,
+  "PRETEST_CLEANED" = df_pre,
+  "POSTTEST_CLEANED" = df_post
+)
+
+##
+dir.create("../_output/", showWarnings = FALSE)
+write_rds(write_to_list, file = "../_output/clean_data.rds")
+writexl::write_xlsx(write_to_list, path = "../_output/cleaned_survey_data.xlsx")
+```
+
+# -------
+# APPENDIX
+---------------------------
+```{r}
+#unique(pre$Q1SFLES13_3)
+recode_lik <- function(x){
+  case_match(.x = x,
+            .default = NA,
+            "Strongly agree" ~ "5",
+            "Somewhat agree" ~ "4",
+            "Neither agree nor disagree" ~ "3",
+            "Neither disagree nor agree" ~ 3, # Handle variation
+            "Somewhat disagree" ~ "2",
+            "Strongly disagree" ~ "1")
+}
+
+```
