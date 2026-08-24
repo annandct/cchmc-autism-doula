@@ -23,25 +23,7 @@ knitr::opts_chunk$set(fig.path = fig_path,
                       message=FALSE, warning=FALSE, cache = FALSE) 
 ```  
 
-
-```{r include=FALSE}
-# .base_dir <- "../" 
-# .fig_path <- "_plot_images/" 
-# 
-# knitr::opts_knit$set(base.dir = .base_dir)
-# knitr::opts_chunk$set(
-#   fig.path = .fig_path,
-#   cache.path = 'cache/', 
-#   cache = FALSE,
-#   message = FALSE, 
-#   warning = FALSE,
-#   echo = TRUE
-# )
-
-```
-
-# 0. Setup & Data Ingestion
-## 0.1 Libraries
+# 0. Setup, Libraries, Data Files
 
 ```{r}
 library(dplyr)       # Data manipulation
@@ -50,7 +32,9 @@ library(tidyr)       # Data pivoting
 library(readr)       # Reading data
 library(kableExtra)  # HTML Table formatting
 library(ggplot2)     # Visualizations
+library(plotly)
 library(ggpubr)      # Publication-ready plots
+
 library(rstatix)     # T-tests and effect sizes
 library(broom)       # Tidy statistical outputs
 library(forcats)     # Factor manipulation
@@ -120,8 +104,8 @@ EFF.scored %>% select(StudyID, Group_Assignment, contains(c("Sum","Mean"))) %>%
 ```{r}
 library(tableone)
 EFF.t1 <- 
-  EFF.scored %>% 
 tableone::CreateTableOne(
+  data = EFF.scored,
   vars = c("PRE_Overall_SEFF.Mean", "POST_Overall_SEFF.Mean","PRE_Parent_Outcome_Expectations.Mean", "POST_Parent_Outcome_Expectations.Mean","PRE_Parent_Competence.Mean", "POST_Parent_Competence.Mean"),
   strata = "Group_Assignment",
   factorVars = c("Group_Assignment"),
@@ -263,23 +247,10 @@ EFF.scored %>%
 
 ### 2.2 Outlier Identification
 ```{r}
-EFF.check <- EFF.scored %>% 
-  mutate(
-    across(contains(c(".Sum", ".Mean")), ~ifelse(.==0, NA, .)), 
-    Filter_Diff = POST_Overall_SEFF.Sum - PRE_Overall_SEFF.Sum,
-    Filter_Diff = ifelse(Group_Assignment == "Control", NA, Filter_Diff)) %>% 
-  rowwise() %>% 
-  mutate(
-    Complete = ifelse(any(is.na(c_across(contains("_Q")))), "Incomplete", "Complete")
-  ) %>% 
-  ungroup()
-
-EFF.check %>% ggplot(aes(x=Filter_Diff))+ geom_histogram()
-
-library(magrittr)
-EFF.check %>% select(contains(c(".Sum", ".Mean", "Complete")))
+EFF.check <- EFF.scored %>% mutate(Filter_Diff = POST_Overall_SEFF.Mean - PRE_Overall_SEFF.Mean,
+                                   Filter_Diff = ifelse(Group_Assignment == "Control", NA, Filter_Diff))
 #Control scores changed to NA and then ignored
-f.mn <- mean(EFF.check$Filter_Diff[EFF.check$Complete == "Complete"], na.rm=TRUE)
+f.mn <- mean(EFF.check$Filter_Diff, na.rm = TRUE)
 f.sd <- sd(EFF.check$Filter_Diff, na.rm = TRUE)
 
 EFF.check <- EFF.check %>% 
@@ -409,15 +380,6 @@ EFF.long %>%
 ```
 
 
-```{r}
-EFF.check %>% select(contains("Overall_SEFF.Mean")) %>% rstatix::cor_test(method = "kendall") 
-
-lm(POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean, data = EFF.check) %>% summary()
-
-lm(POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean, data = EFF.check) %>% plot()
-
-```
-
 
 
 ```{r}
@@ -446,39 +408,23 @@ lm(POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean, data = EFF.check) %>% plot()
 
 
 ```{r}
-EFF.check %>%
-  #filter(Filter_Criterion == "Include") %>%
-  filter(Group_Assignment == "Intervention") %>%
-  select(StudyID, contains(".Mean")) %>%
-  pivot_longer(cols = contains(c("Overall", "Parent")), names_to = "Composite", values_to = "Score") %>%
-  mutate(
-    Timepoint = if_else(str_detect(Composite, "PRE_"), "Pre-Test", "Post-Test"),
-    Timepoint = factor(Timepoint, levels = c("Pre-Test", "Post-Test")),
-  ) %>%
-  mutate(Composite_Type = str_replace_all(Composite, "_", " ")) %>% 
-  ggboxplot(
-    x = "Timepoint", y = "Score",
-    color = "Condition", palette = "jco",
-    add = "jitter",
-    facet.by = "Composite",
-    short.panel.labs = TRUE
-  ) +
-  labs(
-    title = "Composite Scores: Pre-Test vs. Post-Test",
-    x = "Timepoint",
-    y = "Mean Score"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-
-# Run Paired T-Tests
-#EFF.t_test_results <- EFF.test.long %>%
-  rstatix::pairwise_t_test(Score ~ Timepoint, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "greater", pool.sd=TRUE)
-  #adjust_pvalue(method = "holm") %>%
-  #add_significance("p.adj")
-
-EFF.t_test_results
+# EFF.check %>% 
+#   filter(Filter_Criterion == "Include") %>%
+#   filter(Group_Assignment == "Intervention") %>% 
+#   select(StudyID, contains("Parent_Competence.Mean")) %>%  
+#   pivot_longer(cols = contains(c("Overall", "Parent")), names_to = "Composite", values_to = "Score") %>% 
+#   mutate(
+#     Timepoint = if_else(str_detect(Composite, "PRE_"), "Pre-Test", "Post-Test"),
+#     Timepoint = factor(Timepoint, levels = c("Pre-Test", "Post-Test")),
+#   ) %>% 
+# 
+# # Run Paired T-Tests
+# #EFF.t_test_results <- EFF.test.long %>%
+#   rstatix::pairwise_t_test(Score ~ Timepoint, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "greater", pool.sd=TRUE)
+#   #adjust_pvalue(method = "holm") %>%
+#   #add_significance("p.adj")
+# 
+# EFF.t_test_results
 ```
 
 
@@ -524,75 +470,31 @@ EFF.pre_boxplot + EFF.post_boxplot + plot_annotation(title = "EFF - Pre/Post Sel
 
 ## 4.1 Change in Total Scores (Arrow Plot)
 ```{r}
-EFF.check %>% 
-  filter(Group_Assignment == "Intervention",
-         Complete == "Complete") %>% 
-  arrange(PRE_Overall_SEFF.Sum) %>% 
+EFF.scored %>% 
+  arrange(PRE_Overall_SEFF.Mean) %>% 
   mutate(
-    Rank_Order = seq_along(PRE_Overall_SEFF.Sum),
-    Pct_Order = percent_rank(PRE_Overall_SEFF.Sum)
+    Rank_Order = seq_along(PRE_Overall_SEFF.Mean),
+    Pct_Order = percent_rank(PRE_Overall_SEFF.Mean)
   ) %>% 
   ggplot(aes(x = Rank_Order)) +
   # 1. Add the arrows (vertical segments)
   geom_segment(aes(
     xend = Rank_Order, 
-    y = PRE_Overall_SEFF.Sum, 
-    yend = POST_Overall_SEFF.Sum
+    y = PRE_Overall_SEFF.Mean, 
+    yend = POST_Overall_SEFF.Mean
   ), 
   arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
   color = "gray", 
   alpha = 0.5) +
   
   # 2. Add the PRE points
-  geom_point(aes(y = PRE_Overall_SEFF.Sum, color = "PRE_Overall_SEFF.Sum")) +
+  geom_point(aes(y = PRE_Overall_SEFF.Mean, color = "PRE_Overall_SEFF.Mean")) +
   
   # 3. Add the POST points
-  geom_point(aes(y = POST_Overall_SEFF.Sum, color = "POST_Overall_SEFF.Sum")) +
-  
-  #4. Grouping...
-  #facet_wrap(~Complete)+
+  geom_point(aes(y = POST_Overall_SEFF.Mean, color = "POST_Overall_SEFF.Mean")) +
   
   # Formatting
-  scale_color_manual(values = c("PRE_Overall_SEFF.Sum" = "red", "POST_Overall_SEFF.Sum" = "blue")) +
-  labs(
-    title = "Individual Self-Efficacy Score Change (Ranked by PRE Score)",
-    x = "Participant Rank (Low to High PRE Self-Efficacy)",
-    y = "Total Self-Efficacy Score",
-    color = "Timepoint"
-  ) +
-  theme_minimal()
-```
-```{r}
-EFF.check %>% 
-  filter(Group_Assignment == "Intervention",
-         Complete == "Complete") %>% 
-  arrange(PRE_Parent_Outcome_Expectations.Sum) %>% 
-  mutate(
-    Rank_Order = seq_along(PRE_Parent_Outcome_Expectations.Sum),
-    Pct_Order = percent_rank(PRE_Parent_Outcome_Expectations.Sum)
-  ) %>% 
-  ggplot(aes(x = Rank_Order)) +
-  # 1. Add the arrows (vertical segments)
-  geom_segment(aes(
-    xend = Rank_Order, 
-    y = PRE_Parent_Outcome_Expectations.Sum, 
-    yend = POST_Parent_Outcome_Expectations.Sum
-  ), 
-  arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
-  color = "gray", 
-  alpha = 0.5) +
-  
-  # 2. Add the PRE points
-  geom_point(aes(y = PRE_Parent_Outcome_Expectations.Sum, color = "PRE_Parent_Outcome_Expectations.Sum")) +
-  
-  # 3. Add the POST points
-  geom_point(aes(y = POST_Parent_Outcome_Expectations.Sum, color = "POST_Parent_Outcome_Expectations.Sum")) +
-  
-  #4. Grouping...
-  #facet_wrap(~Complete)+
-  
-  # Formatting
-  scale_color_manual(values = c("PRE_Parent_Outcome_Expectations.Sum" = "red", "POST_Parent_Outcome_Expectations.Sum" = "blue")) +
+  scale_color_manual(values = c("PRE_Overall_SEFF.Mean" = "red", "POST_Overall_SEFF.Mean" = "blue")) +
   labs(
     title = "Individual Self-Efficacy Score Change (Ranked by PRE Score)",
     x = "Participant Rank (Low to High PRE Self-Efficacy)",

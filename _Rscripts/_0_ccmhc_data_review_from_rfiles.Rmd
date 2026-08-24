@@ -1,0 +1,224 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+date: "`r Sys.Date()`"
+title: "_0_ccmhc_data_review_from_rfiles"
+---
+
+
+```{r setup, include=FALSE}
+base_dir <- "../" # where output should default to
+base_url <- "" # keep as is
+fig_path <- "_plot_images/" # where image output should go
+
+knitr::opts_knit$set(base.dir = base_dir)
+knitr::opts_chunk$set(fig.path = fig_path,
+                      cache.path = 'cache/',  #log files go here
+                      message=FALSE, warning=FALSE, cache = FALSE) 
+```  
+
+# 1. Setup & Data Ingestion
+## 1.1 Libraries
+
+```{r}
+library(dplyr)       # Data manipulation
+library(stringr)     # String manipulation
+library(tidyr)       # Data pivoting
+library(readr)       # Reading data
+library(kableExtra)  # HTML Table formatting
+library(ggplot2)     # Visualizations
+library(ggpubr)      # Publication-ready plots
+library(rstatix)     # T-tests and effect sizes
+library(broom)       # Tidy statistical outputs
+library(forcats)     # Factor manipulation
+library(effectsize)  # effect size & omega squared
+
+```
+
+## 1.2 Load Data
+### 1.2.0 !! Updated Data File:
+- **UPDATED DATA FILE** - SEFF_Updated...
+  - Both Surveys are connected to a single participant ID (Pre and Post) and collated in one spreadsheet
+  - Will separate each into its own table, for clarity/checks and file write out. 
+  - Rejoin and save data files for analysis scripts.
+
+- **Structure**
+  - Study_ID (Joined ID across pre and post, unique to participant)
+  - Group Assignment (Control or Intervention)
+  - Stress Scale: **PSS** - *Perceived Stress Scale* - 10 Questions
+  - SEFF Scale: **EFF** - *Eearly Intervention Parent Self Efficacy* -  14 Questions
+  - Columns as Pre --> Post 
+
+# NEW FILES FROM R CHECK
+```{r}
+## raw_data in CSV format... means we get the numbers (and also some added data - rather than LABELS (strongly agree etc...))
+# read RAWS
+control.csv <- readr::read_csv("../_data/CONTROLPostMeasuresA_DATA_2026-08-24_1126.csv", col_names = TRUE)
+pre.csv <- readr::read_csv("../_data/FamilyInfoAndPreMeas_DATA_2026-08-24_1122.csv", col_names = TRUE)
+post.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_2026-08-24_1123.csv", col_names = TRUE)
+```
+
+
+```{r}
+control.csv %>% 
+  kable(caption="Raw Data: Control Group") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+```{r}
+pre.csv %>% 
+  kable(caption="Raw Data: Intervention - PRETEST") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+```{r}
+pre.PSS.sel <- pre.csv %>% 
+  select("StudyID" = record_id,
+            #"Group_Assignment" = "Intervention",
+            contains("promis"))
+
+pre.PSS.sel %>% 
+  kable(caption="Raw Data: Intervention - PRETEST") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+## Big Question: Are these numbers already reversed? 
+ - And because we were exporting LABELS (Agree, Strongly Disagree) etc... did that NOT, or ALREADY do the reversing....???
+
+```{r}
+pre.PSS.mut <- pre.PSS.sel %>% 
+  mutate(
+    # CALC WITHOUT REVERSE 
+    "PSS_RAW.sum" = rowSums(select(., 2:11), na.rm=TRUE),
+    "PSS_RAW.mean" = rowMeans(select(.,2:11), na.rm=TRUE))
+
+pre.PSS.REV.mut <- pre.PSS.sel %>%
+  mutate(
+    across(ends_with("_r"), ~ 5 - .)) %>% 
+  mutate(
+    "PSS_REV.sum" = rowSums(select(.,2:11), na.rm=TRUE),
+    "PSS_REV.mean" = rowMeans(select(.,2:11), na.rm=TRUE)
+    )
+
+together <- cbind(
+  pre.PSS.mut %>% select(StudyID, contains(c(".sum",".mean"))),
+  pre.PSS.REV.mut %>% select(contains(c(".sum",".mean")))
+  )
+
+together %>% 
+  kable(caption="BOTH METHODS") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+```{r}
+together.long <- 
+together %>% 
+  pivot_longer(-1, names_to = "Data_Method", values_to = "Value") %>% 
+  mutate("Method" = ifelse(str_detect(Data_Method, "REV"), "Reverse", "Raw"),
+"Calculation" = ifelse(str_detect(Data_Method, "sum"), "sum", "mean"))
+```
+
+
+```{r}
+together.long %>% 
+  ggplot(aes(x=Method, y = Value, color = Method, fill = Method))+
+  geom_boxplot(alpha = .25)+
+  geom_jitter()+
+  facet_wrap(~Calculation, scales = "free")
+
+
+```
+### CTA THOUGHT:
+- This looks like I should be using the **RAW** column output; (if going from RAW data) e.g.
+- **RED CAP ALREADY REVERSES THE QUESTIONS** (They are tagged as reverse coded)
+- Comparing this to the other data BELOW::
+
+## From previous data wrangling... 
+- StudyID is REDCAP ID!!!
+- Not 100% I trust that
+
+```{r}
+analytic.files <- readRDS("../_output/analytic_files_scored_surveys.Rds")
+PSS.scored <- analytic.files$PSS.Scored
+
+check_joined <- left_join(
+  x = PSS.scored %>% select(StudyID, "PRE_Stress.sum" = PRE_Stress.Total, "PRE_Stress.mean" = PRE_Stress.Mean),
+  y = together,
+  by = "StudyID"
+)
+
+check_joined.m <- check_joined %>% pivot_longer(-1, names_to = "Data_Method", values_to = "Value") %>% 
+  mutate("Method" = ifelse(str_detect(Data_Method, "PRE"), "original", "new"),
+         "REVERSE" = ifelse(str_detect(Data_Method, "REV"), "Reverse", "Raw"),
+         "Calculation" = ifelse(str_detect(Data_Method, "sum"), "sum", "mean"))
+
+check_joined.m %>% 
+  filter(!is.na(Value)) %>% 
+  kable(caption="Comparing Output from REDCAP") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+
+```
+
+
+```{r}
+check_joined.m %>% 
+  ggplot(aes(x=Method, y = Value, color = REVERSE, fill = REVERSE))+
+  geom_boxplot(alpha = .25)+
+  geom_jitter()+
+  facet_wrap(~Calculation, scales = "free")
+  
+```
+
+### -------
+
+## Other Data from CSV
+
+```{r}
+pre.EFF.sel <- pre.csv %>% 
+  select("StudyID" = record_id,
+            #"Group_Assignment" = "Intervention",
+            sickchild:pre_parent_self_efficacy_complete) %>% 
+  rename_with(~paste0("EFF_Q", 1:16, "_", .), .cols = 2:17)
+
+pre.EFF.sel %>% kable(caption="PRE SURVEY - RAW Output from REDCAP") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+```{r}
+post.csv %>% 
+  kable(caption="POST SURVEY - RAW Output from REDCAP") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+## ALL DATA FILE 
+
+```{r}
+# Read in raw dataset
+ALL_DATA.raw <- read_csv("../_data/stress and SE ALL blind.csv", col_names = TRUE)
+
+string_stub <- function(x){paste0(str_sub(x,1,17), "...", str_sub(x,-2,-1))}
+#string_stub("In the past month... How often have you felt that you were unable to control the important things in your life?...6")
+
+ALL_DATA.raw %>% 
+  rename_with( ~ifelse(str_length(.) > 30, yes = string_stub(.), .)) %>% 
+  kable(caption="All Survey Data - Linked to Study ID (Anon) - Shortened Column Names") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```

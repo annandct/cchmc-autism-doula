@@ -10,7 +10,7 @@ This repository contains the data, R analysis scripts, required to replicate the
 
 -   All analytic scripts are viewable as markdown in the main folder, and as code in Rscripts folder.
 
-1.  [Data Ingestion](_1_ccmhc_study_data_ingestion_08-2026.md)
+1.  [Data Ingestion](_1_ccmhc_full_study_data_ingestion_08-2026.md)
 2.  [PSS Analysis](_2_ccmhc_study_PSS_analysis_08-2026.md)
 3.  [EIPSES Analysis](_3_ccmhc_study_SEFF_analysis_08-2026.md)
 4.  Appendix Code & Visuals:
@@ -21,3 +21,22 @@ This repository contains the data, R analysis scripts, required to replicate the
     -   `analytic_files_scored_surveys.Rds`, `analytic_files_scored_surveys.xlsx`,
 -   **`_Rscripts/` (and root `*.Rmd` files)**: The sequential R Markdown analysis pipeline.
 -   **`_plot_images/`**: Figures and plots generated during the analysis (e.g., Boxplots, LMM interaction plots, TAM scatterplots).
+
+
+# Information and Citations
+Organization Grant Number: R1UM1TR005265
+
+Red Cap Systems:
+
+Study data were collected and managed using REDCap electronic data capture tools; organization reference number: R1UM1TR005265. 
+1,2 REDCap (Research Electronic Data Capture) is a secure, web-based software platform designed to support data capture for research studies, providing 
+  1) an intuitive interface for validated data capture; 
+  2) audit trails for tracking data manipulation and export procedures; 
+  3) automated export procedures for seamless data downloads to common statistical packages; and 
+  4) procedures for data integration and interoperability with external sources.
+
+  1. PA Harris, R Taylor, R Thielke, J Payne, N Gonzalez, JG. Conde, Research electronic data capture (REDCap) – A metadata-driven methodology and workflow process for providing translational research informatics support, J Biomed Inform. 2009 Apr;42(2):377-81.
+  2. 2PA Harris, R Taylor, BL Minor, V Elliott, M Fernandez, L O’Neal, L McLeod, G Delacqua, F Delacqua, J Kirby, SN Duda, REDCap Consortium, The REDCap consortium: Building an international community of software partners, J Biomed Inform. 2019 May 9 [doi: 10.1016/j.jbi.2019.103208]
+
+Additional Technologies incoporated:
+  Jihad S. Obeid, Catherine A. McGraw, Brenda L. Minor, José G. Conde, Robert Pawluk, Michael Lin, Janey Wang, Sean R. Banks, Sheree A. Hemphill, Rob Taylor, Paul A. Harris, "Procurement of shared data instruments for Research Electronic Data Capture (REDCap)", Journal of Biomedical Informatics, Volume 46, Issue 2, 2013, Pages 259-265, ISSN 1532-0464. https://doi.org/10.1016/j.jbi.2012.10.006

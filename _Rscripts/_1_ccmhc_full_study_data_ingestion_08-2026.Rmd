@@ -60,6 +60,24 @@ library(effectsize)  # effect size & omega squared
 # Read in raw dataset
 ALL_DATA.raw <- read_csv("../_data/stress and SE ALL blind.csv", col_names = TRUE)
 
+string_stub <- function(x){paste0(str_sub(x,1,17), "...", str_sub(x,-2,-1))}
+#string_stub("In the past month... How often have you felt that you were unable to control the important things in your life?...6")
+
+ALL_DATA.raw %>% 
+  rename_with( ~ifelse(str_length(.) > 30, yes = string_stub(.), .)) %>% 
+  kable(caption="All Survey Data - Linked to Study ID (Anon) - Shortened Column Names") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+```{r}
+ALL_DATA.raw %>% 
+  rename_with(~paste("C", 1:61, ., sep = "_")) %>%
+  rename_with(~ifelse(str_length(.) > 20, yes = str_sub(.,1,20), .)) %>% glimpse() 
+```
+
+
+```{r}
 #Split to Pre and Post & Select only Study ID, Group Assignment and Questions:
 pre.PSS.named <- 
   ALL_DATA.raw %>% 
@@ -99,7 +117,8 @@ post.PSS.named <-
     mutate(across(contains("_Q"), tolower)) #ALL QUESTION TEXT tolower, as earlier data file had capitalization issues; "Agree / agree"
 
 post.PSS.named %>% kable(caption="STRESS - Post Intervention Data") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
 ```
 
 ### 1.2.4 Post EFF
@@ -113,7 +132,8 @@ post.EFF.named  <-
     mutate(across(contains("_Q"), tolower)) #ALL QUESTION TEXT tolower, as earlier data file had capitalization issues; "Agree / agree"
 
 post.EFF.named %>% kable(caption="SEFF - Post Intervention Data") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
 ```
 
 ## 1.3 Joins & Item Checks
@@ -207,7 +227,7 @@ PSS.mutated %>% select(StudyID, Group_Assignment, contains("PRE_S"), contains("P
     - Parent Competence: 1, 2, 9, 14.
 
 ```{r}
-#all.EFF.named %>% glimpse()
+all.EFF.named %>% arrange(Group_Assignment)
 ```
 
 ```{r}
@@ -229,29 +249,32 @@ EFF.mutated <- all.EFF.named %>%
                 ~ 8 - .)) %>% #  For 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
 
   # 3. Mean replace NAs
-  mutate(across(contains("_Q"), ~ifelse(is.na(.), mean(., na.rm = TRUE), .))) %>%
+  #mutate(across(contains("_Q"), ~ifelse(is.na(.), mean(., na.rm = TRUE), .))) %>%
   
   # 4. Calculate Composite Totals
-  mutate(
     # PRE Composites
-    PRE_Parent_Outcome_Expectations.Sum = rowSums(select(., ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+  mutate(
+    PRE_Parent_Outcome_Expectations.Sum = rowSums(.,select(ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
     PRE_Parent_Competence.Sum = rowSums(select(., ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
     PRE_Overall_SEFF.Sum = rowSums(select(., contains("PRE_Q")), na.rm = TRUE),
     
     # POST Composites
-    POST_Parent_Outcome_Expectations.Sum = rowSums(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Outcome_Expectations.Sum = 
+      rowSums(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
     POST_Parent_Competence.Sum = rowSums(select(., ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
     POST_Overall_SEFF.Sum = rowSums(select(., contains("POST_Q")), na.rm = TRUE)
   ) %>% 
   # 5. Calculate Composite MEANS
   mutate(
     # PRE Composites
-    PRE_Parent_Outcome_Expectations.Mean = rowMeans(select(., ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+    PRE_Parent_Outcome_Expectations.Mean = 
+      rowMeans(select(., ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
     PRE_Parent_Competence.Mean = rowMeans(select(., ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
     PRE_Overall_SEFF.Mean = rowMeans(select(., contains("PRE_Q")), na.rm = TRUE),
     
     # POST Composites
-    POST_Parent_Outcome_Expectations.Mean = rowMeans(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Outcome_Expectations.Mean = 
+      rowMeans(select(., ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
     POST_Parent_Competence.Mean = rowMeans(select(., ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
     POST_Overall_SEFF.Mean = rowMeans(select(., contains("POST_Q")), na.rm = TRUE)
   ) #%>% 
@@ -259,9 +282,71 @@ EFF.mutated <- all.EFF.named %>%
 
 if(is.na(EFF.mutated) %>% sum() > 0){
   # Check for any remaining NAs in the final scored dataset
-  print("ERROR - NA OR MISSING DATA")
+  print("NA OR MISSING DATA - Flag!")
 }
+
 ```
+```{r}
+EFF.mutated.NEW <- all.EFF.named %>% 
+  # 1. Convert text to numeric Likert (1-7)
+  mutate(across(contains("_Q"), ~case_match(.,
+    "strongly disagree" ~ 1,
+    "disagree" ~ 2,
+    "somewhat disagree" ~ 3,
+    "neutral" ~ 4,
+    "somewhat agree" ~ 5,
+    "agree" ~ 6,
+    "strongly agree" ~ 7,
+    .default = NA_real_
+  ))) %>% 
+  
+  # 2. Reverse Code specific items
+  mutate(across(ends_with(c("Q3", "Q5", "Q6", "Q8", "Q10", "Q12", "Q13", "Q15", "Q16")), 
+                ~ 8 - .)) %>% #  For 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
+
+  # 3. Mean replace NAs
+  #mutate(across(contains("_Q"), ~ifelse(is.na(.), mean(., na.rm = TRUE), .))) %>%
+  
+  # 4. Calculate Composite Totals
+    # PRE Composites
+  rowwise() %>% 
+  mutate(
+    PRE_Parent_Outcome_Expectations.Sum = sum(c_across(ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+    PRE_Parent_Competence.Sum = sum(c_across(ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
+    PRE_Overall_SEFF.Sum = sum(c_across(contains("PRE_Q")), na.rm = TRUE),
+    
+    # POST Composites
+    POST_Parent_Outcome_Expectations.Sum = 
+      sum(c_across(ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Competence.Sum = sum(c_across(ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
+    POST_Overall_SEFF.Sum = sum(c_across(contains("POST_Q")), na.rm = TRUE)
+  ) %>% 
+  # 5. Calculate Composite MEANS
+  mutate(
+    # PRE Composites
+    PRE_Parent_Outcome_Expectations.Mean = 
+      mean(c_across(ends_with(c("PRE_Q3", "PRE_Q4", "PRE_Q5", "PRE_Q6", "PRE_Q7", "PRE_Q8", "PRE_Q10", "PRE_Q12", "PRE_Q15", "PRE_Q16"))), na.rm = TRUE),
+    PRE_Parent_Competence.Mean = mean(c_across(ends_with(c("PRE_Q1", "PRE_Q2", "PRE_Q9", "PRE_Q14"))), na.rm = TRUE),
+    PRE_Overall_SEFF.Mean = mean(c_across(contains("PRE_Q")), na.rm = TRUE),
+    
+    # POST Composites
+    POST_Parent_Outcome_Expectations.Mean = 
+      mean(c_across(ends_with(c("POST_Q3", "POST_Q4", "POST_Q5", "POST_Q6", "POST_Q7", "POST_Q8", "POST_Q10", "POST_Q12", "POST_Q15", "POST_Q16"))), na.rm = TRUE),
+    POST_Parent_Competence.Mean = mean(c_across(ends_with(c("POST_Q1", "POST_Q2", "POST_Q9", "POST_Q14"))), na.rm = TRUE),
+    POST_Overall_SEFF.Mean = mean(c_across(contains("POST_Q")), na.rm = TRUE)
+  ) %>% 
+  ungroup()
+
+EFF.mutated.NEW %>% select(contains(".Sum"))
+```
+
+```{r}
+EFF.mutated %>% select(contains(".Sum"))
+```
+
+
+### Note!
+- There are intervention participants that missed sections of the study - these will need to be treated as missing data, removed from tests (but can still be in the anlysis potentially).
 
 
 ```{r}
@@ -286,5 +371,10 @@ analytic.files <- list(
 readr::write_rds(
   analytic.files,
   path = "../_output/analytic_files_scored_surveys.Rds" )
+
+writexl::write_xlsx(
+  analytic.files,
+  path = "../_output/analytic_files_scored_surveys.xlsx",
+  col_names = TRUE)
 
 ```
