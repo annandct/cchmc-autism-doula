@@ -2556,6 +2556,8 @@ NA
 
 </div>
 
+## Red Cap Exported :: Raw DATA
+
 ``` r
 pre.csv %>% 
   kable(caption="Raw Data: Intervention - PRETEST") %>% 
@@ -27927,7 +27929,5086 @@ check_joined.m %>%
 
 ### ——-
 
-## Other Data from CSV
+# LABEL V RAW
+
+## Red Cap Exported :: LABEL DATA
+
+``` r
+post.RAW.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_2026-08-24_1123.csv", col_names = TRUE)
+
+post.RAW.csv %>% 
+  filter(!is.na(form_1_timestamp)) %>%
+  select(1:20) %>%
+  kable(caption="Raw Data: Intervention - POSTTEST") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+Raw Data: Intervention - POSTTEST
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+record_id
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+redcap_survey_identifier
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+form_1_timestamp
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+participant_number
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_upset
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_control
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_stress
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_personal_problems
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_going_your_way
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_cope
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_irritation
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_on_top_of_things
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_anger
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+post_piling_up
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+child_problems
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+difference
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+therapists
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+difference_3
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+difference_4
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+difference_5
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-04-21 16:28:40
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-05-01 08:23:41
+</td>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-05-13 22:38:39
+</td>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-06-23 17:34:05
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 10:11:33
+</td>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 10:17:43
+</td>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 10:20:42
+</td>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 11:28:49
+</td>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 12:13:24
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 18:10:26
+</td>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+15
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-22 09:52:46
+</td>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-30 10:22:33
+</td>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-08-18 20:52:41
+</td>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-08-19 01:45:12
+</td>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+19
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 11:16:43
+</td>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+20
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 11:43:15
+</td>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 12:48:58
+</td>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 13:03:05
+</td>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+23
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 13:12:25
+</td>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+24
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-10 16:44:02
+</td>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+25
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-12 09:09:08
+</td>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2026-01-08 10:15:02
+</td>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+27
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2026-01-08 10:15:35
+</td>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+4
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+``` r
+post.LABEL.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_LABELS_2026-08-24_1124.csv", col_names = TRUE)
+
+string_stub <- function(x){paste0(str_sub(x,1,25), "...", str_sub(x,-10,-1))}
+#string_stub("In the past month... How often have you felt that you were unable to control the important things in your life?...6")
+
+post.LABEL.csv %>%
+  filter(!is.na(`Survey Timestamp`)) %>%
+  select(1:20) %>% 
+  #rename_with( ~ifelse(str_length(.) > 30, yes = string_stub(.), .)) %>% 
+  kable(caption="LABEL Data: Intervention - POSTTEST") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "2000px", width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:2000px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped table-hover" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+
+<caption>
+
+LABEL Data: Intervention - POSTTEST
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+Record ID
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Survey Identifier
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Survey Timestamp
+</th>
+
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
+Number assigned by study staff
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you been upset because of something
+that happened unexpectedly?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you felt that you were unable to
+control the important things in your life?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you felt nervous and ‘stressed’?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you felt confident about your ability
+to handle your personal problems?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you felt that things were going your
+way?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you found that you could not cope with
+all the things that you had to do?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you been able to control irritations
+in your life?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you felt that you were on top of
+things?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you been angered because of things
+that happened that were outside of your control?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+In the past month… How often have you felt difficulties were piling up
+so high that you could not overcome them?
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+If my child is having problems, I would be able to think of some ways to
+help my child.
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+When my child shows improvement, it is because I am able to make a
+difference in my child’s development.
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+When it comes right down to it, parents really can’t do much because
+most of a children’s development depends on their early
+interventionists/therapists.
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+If one of my child’s early interventionists/therapists have difficulty
+with my child, I would be able to offer some suggestions.
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Children will make the most progress if their early
+interventionists/therapists work with them rather than if the parents
+work with the children.
+</th>
+
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
+Even a good parent may not have much impact on whether children feel
+good about themselves.
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-04-21 16:28:40
+</td>
+
+<td style="text-align:right;">
+
+1
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+5
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-05-01 08:23:41
+</td>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+7
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-05-13 22:38:39
+</td>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-06-23 17:34:05
+</td>
+
+<td style="text-align:right;">
+
+3
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+9
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 10:11:33
+</td>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 10:17:43
+</td>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+11
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 10:20:42
+</td>
+
+<td style="text-align:right;">
+
+39
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+12
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 11:28:49
+</td>
+
+<td style="text-align:right;">
+
+42
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+13
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 12:13:24
+</td>
+
+<td style="text-align:right;">
+
+6
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+14
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-14 18:10:26
+</td>
+
+<td style="text-align:right;">
+
+50
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+15
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-22 09:52:46
+</td>
+
+<td style="text-align:right;">
+
+28
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-07-30 10:22:33
+</td>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+17
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-08-18 20:52:41
+</td>
+
+<td style="text-align:right;">
+
+53
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+18
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-08-19 01:45:12
+</td>
+
+<td style="text-align:right;">
+
+16
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+19
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 11:16:43
+</td>
+
+<td style="text-align:right;">
+
+40
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+20
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 11:43:15
+</td>
+
+<td style="text-align:right;">
+
+58
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+21
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 12:48:58
+</td>
+
+<td style="text-align:right;">
+
+32
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+22
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 13:03:05
+</td>
+
+<td style="text-align:right;">
+
+45
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+23
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-04 13:12:25
+</td>
+
+<td style="text-align:right;">
+
+56
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+24
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-10 16:44:02
+</td>
+
+<td style="text-align:right;">
+
+8
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+25
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2025-11-12 09:09:08
+</td>
+
+<td style="text-align:right;">
+
+51
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+26
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2026-01-08 10:15:02
+</td>
+
+<td style="text-align:right;">
+
+44
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Very Often
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Disagree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+<td style="text-align:left;">
+
+Strongly Disagree
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+27
+</td>
+
+<td style="text-align:left;">
+
+NA
+</td>
+
+<td style="text-align:left;">
+
+2026-01-08 10:15:35
+</td>
+
+<td style="text-align:right;">
+
+59
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Sometimes
+</td>
+
+<td style="text-align:left;">
+
+Fairly Often
+</td>
+
+<td style="text-align:left;">
+
+Never
+</td>
+
+<td style="text-align:left;">
+
+Almost Never
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Neutral
+</td>
+
+<td style="text-align:left;">
+
+Agree
+</td>
+
+<td style="text-align:left;">
+
+Somewhat Agree
+</td>
+
+<td style="text-align:left;">
+
+Disagree
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
 
 ``` r
 pre.EFF.sel <- pre.csv %>% 

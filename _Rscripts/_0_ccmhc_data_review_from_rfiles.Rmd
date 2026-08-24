@@ -73,6 +73,7 @@ control.csv %>%
   scroll_box(height = "400px", width = "100%")
 ```
 
+## Red Cap Exported :: Raw DATA
 
 ```{r}
 pre.csv %>% 
@@ -80,7 +81,6 @@ pre.csv %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
   scroll_box(height = "400px", width = "100%")
 ```
-
 
 ```{r}
 pre.PSS.sel <- pre.csv %>% 
@@ -185,7 +185,39 @@ check_joined.m %>%
 
 ### -------
 
-## Other Data from CSV
+# LABEL V RAW
+
+
+## Red Cap Exported :: LABEL DATA
+
+```{r}
+post.RAW.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_2026-08-24_1123.csv", col_names = TRUE)
+
+post.RAW.csv %>% 
+  filter(!is.na(form_1_timestamp)) %>%
+  select(1:20) %>%
+  kable(caption="Raw Data: Intervention - POSTTEST") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+```{r}
+post.LABEL.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_LABELS_2026-08-24_1124.csv", col_names = TRUE)
+
+string_stub <- function(x){paste0(str_sub(x,1,25), "...", str_sub(x,-10,-1))}
+#string_stub("In the past month... How often have you felt that you were unable to control the important things in your life?...6")
+
+post.LABEL.csv %>%
+  filter(!is.na(`Survey Timestamp`)) %>%
+  select(1:20) %>% 
+  #rename_with( ~ifelse(str_length(.) > 30, yes = string_stub(.), .)) %>% 
+  kable(caption="LABEL Data: Intervention - POSTTEST") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "2000px", width = "100%")
+
+```
+
 
 ```{r}
 pre.EFF.sel <- pre.csv %>% 
