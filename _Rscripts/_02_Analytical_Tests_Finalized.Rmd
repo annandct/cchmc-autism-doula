@@ -1,0 +1,380 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+date: "`r Sys.Date()`"
+title: "_02_Analytical_Tests_Finalized"
+author: "ACT"
+---
+
+
+```{r setup, include=FALSE}
+base_dir <- "../" # where output should default to
+base_url <- "" # keep as is
+fig_path <- "_plot_images/" # where image output should go
+
+knitr::opts_knit$set(base.dir = base_dir)
+knitr::opts_chunk$set(fig.path = fig_path,
+                      cache.path = 'cache/',  #log files go here
+                      message=FALSE, warning=FALSE, cache = FALSE) 
+```  
+
+# 0. Setup & Data Ingestion
+## 0.1 Libraries
+
+```{r}
+library(dplyr)       # Data manipulation
+library(stringr)     # String manipulation
+library(tidyr)       # Data pivoting
+library(readr)       # Reading data
+library(kableExtra)  # HTML Table formatting
+library(ggplot2)     # Visualizations
+library(ggpubr)      # Publication-ready plots
+library(rstatix)     # T-tests and effect sizes
+library(broom)       # Tidy statistical outputs
+library(forcats)     # Factor manipulation
+library(effectsize)  # effect size & omega squared
+library(jtools)      # APA Formatted Plots
+
+```
+
+
+# Data From Ingestion - Load & Analyze
+
+
+- **Reiterating Scales Info**
+  - Stress Scale: **PSS** - *Perceived Stress Scale* - 10 Questions
+    - Scoring: PSS scores are obtained by reversing responses (e.g., 0 = 4, 1 = 3, 2 = 2, 3 = 1 & 4 = 0) to the four positively stated items (items 4, 5, 7, & 8) and then summing across all scale items. A short 4 item scale can be made from questions 2, 4, 5 and 10 of the PSS 10 item scale.
+  - SEFF Scale: **EFF** - *Eearly Intervention Parent Self Efficacy* -  16 Questions
+    - **Scoring Guidelines (Guimond et al., 2008):**
+      - Mean/Total scores are computed by aggregating all items of the specific scale.
+      - Reverse Scored Items: 3, 5, 6, 8, 10, 12, 13, 15, 16.
+      - Parent Outcome Expectations: 3, 4, 5, 6, 7, 8, 10, 12, 15, 16.
+      - Parent Competence: 1, 2, 9, 14.
+
+
+# 1. Load Ingested Tables Files
+```{r}
+load(file = "../_output/Analytic_Tables_Finalize_2026-10.Rdata", verbose = TRUE)
+```
+
+## Include Only Complete Cases
+```{r}
+# Data screening and complete-case flag
+CCMHC_Study_Scores_Finalized <- CCMHC_Study_Scores_Finalized |> 
+  mutate(Complete_Case = !is.na(POST.PSS.sum) & !is.na(POST.EFF.sum))
+
+table(CCMHC_Study_Scores_Finalized$Group_Assignment, CCMHC_Study_Scores_Finalized$Complete_Case)
+```
+## Make Specific Analytic Tables
+```{r}
+CCMHC_Study_Scores_Finalized <- CCMHC_Study_Scores_Finalized |> filter(Complete_Case==TRUE)
+
+
+PSS <- CCMHC_Study_Scores_Finalized |> select(Study_ID, Group_Assignment, contains("PSS"))
+EFF <- CCMHC_Study_Scores_Finalized |> select(Study_ID, Group_Assignment, contains("EFF"))
+```
+
+
+```{r}
+library(tableone)
+study.t1.pre <- 
+  CCMHC_Study_Scores_Finalized %>% 
+tableone::CreateTableOne(
+  vars = c("PRE.PSS.sum", "PRE.PSS.mean", "PRE.EFF.sum", "PRE.EFF.mean"),
+  strata = "Group_Assignment",
+  factorVars = c("Group_Assignment"),
+  testNormal = "oneway.test"
+) 
+study.t1.pre %>%   print(showAllLevels = TRUE, quote = FALSE, noSpaces = TRUE) %>% 
+  kable(caption="Study - Pre-Test Descriptive Table") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+**Pre-Test Table**
+- Each Table Shows the respective *scale* **mean**, (**SD**) and *p*-value for Normality. 
+
+```{r}
+study.t1.post <- 
+  CCMHC_Study_Scores_Finalized %>% 
+tableone::CreateTableOne(
+  vars = c("POST.PSS.sum", "POST.PSS.mean", "POST.EFF.sum", "POST.EFF.mean"),
+  strata = "Group_Assignment",
+  factorVars = c("Group_Assignment"),
+  testNormal = "oneway.test"
+) 
+study.t1.post %>%   print(showAllLevels = TRUE, quote = FALSE, noSpaces = TRUE) %>% 
+  kable(caption="Study - Post-Test Descriptive Table") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%    scroll_box(height = "400px", width = "100%")
+```
+
+# PROMIS-10 Analysis
+```{r}
+# Chunk 4: PSS Change Score Calculation & Descriptive Verification
+# Compute absolute change (Post - Pre) and percentage change
+PSS_analytic <- PSS |> 
+  mutate(
+    Group_Assignment = factor(Group_Assignment),
+    PSS_sum_change   = POST.PSS.sum - PRE.PSS.sum,
+    PSS_mean_change  = POST.PSS.mean - PRE.PSS.mean
+  )
+
+# Change-score descriptive table stratified by group
+study.t1.change <- PSS_analytic |> 
+  CreateTableOne(
+    vars = c("PSS_sum_change", "PSS_mean_change"),
+    strata = "Group_Assignment",
+    testNormal = "oneway.test"
+  )
+
+study.t1.change |> 
+  print(showAllLevels = TRUE, quote = FALSE, noSpaces = TRUE) |> 
+  kable(caption = "PSS - Change Score Descriptive Table (Post - Pre)") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+
+```{r}
+## -----------------------------------------------------------------------------
+# Chunk 5: Within-Group Verification (Paired t-tests by Group)
+## -----------------------------------------------------------------------------
+# Reshape PSS to long format for paired testing and mixed modeling
+PSS_long <- PSS_analytic |> 
+  pivot_longer(cols = c(PRE.PSS.mean, POST.PSS.mean), names_to = "Time", values_to = "PSS_mean") |> 
+  mutate(Time = factor(if_else(str_detect(Time, "PRE"), "Pre", "Post"), levels = c("Post", "Pre")))
+
+# Paired t-tests per condition
+pss_paired_tests <- PSS_long |> 
+  group_by(Group_Assignment) |> 
+  t_test(PSS_mean ~ Time, paired = TRUE, detailed = TRUE) |> 
+  add_significance()
+
+pss_paired_tests |> 
+  select(Group_Assignment, estimate, conf.low, conf.high, statistic, df, p, p.signif) |> 
+  kable(caption = "PSS mean Score - Within-Group Paired t-Tests") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+- Paired t-test is significant for **Intervention Group** - no change for Control group. 
+
+# Chunk 6: Between-Group Models (ANCOVA & Linear Mixed-Effects Model)
+```{r}
+library(lme4)
+# Model 1: ANCOVA (Predicting Post score controlling for Baseline)
+fit_ancova <- lm(POST.PSS.mean ~ PRE.PSS.mean + Group_Assignment, data = PSS_analytic)
+
+# Model 2: Repeated Measures Linear Mixed-Effects (Group x Time interaction)
+fit_lmm <- lmer(PSS_mean ~ Group_Assignment * Time + (1 | Study_ID), data = PSS_long)
+
+# meanmary Outputs
+anova(fit_ancova) |> 
+  broom::tidy() |> 
+  kable(caption = "PSS mean - ANCOVA Model meanmary (Controlling for Pre-Score)") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+anova(fit_lmm) |> 
+  broom::tidy() |> 
+  kable(caption = "PSS mean - Repeated Measures LMM ANOVA (Group * Time)") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+Linear model; Time is significant (reduction Pre to Post)
+
+
+## PSS Plots
+
+```{r}
+
+
+PSS_analytic %>% 
+  filter(Group_Assignment == "Intervention") |> 
+  arrange(PRE.PSS.mean) %>% 
+  mutate(
+    Rank_Order = seq_along(PRE.PSS.mean),
+    Pct_Order = percent_rank(PRE.PSS.mean)
+  ) %>% 
+  ggplot(aes(x = Rank_Order)) +
+  # 1. Add the arrows (vertical segments)
+  geom_segment(aes(
+    xend = Rank_Order, 
+    y = PRE.PSS.mean, 
+    yend = POST.PSS.mean
+  ), 
+  arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
+  color = "gray", 
+  alpha = 0.5) +
+  
+  # 2. Add the PRE points
+  geom_point(aes(y = PRE.PSS.mean, color = "PRE.PSS.mean")) +
+  
+  # 3. Add the POST points
+  geom_point(aes(y = POST.PSS.mean, color = "POST.PSS.mean")) +
+  
+  #4. Grouping...
+  #facet_wrap(~Complete)+
+  
+  # Formatting
+  scale_color_manual(values = c("PRE.PSS.mean" = "red", "POST.PSS.mean" = "blue")) +
+  labs(
+    #title = "Individual Stress Score Change (Ranked by PRE Score)",
+    x = "Participant Rank (Low to High Pre-Test Stress)",
+    y = "Total Stress Score",
+    color = "Timepoint"
+  ) +
+  theme_apa() +#theme_minimal()
+  theme(legend.position = "bottom" )
+
+```
+
+
+## End PSS Section
+### -----------------
+
+
+# EFF Section
+## Chunk 7: EFF Change Score Calculation & Descriptive Verification
+```{r}
+EFF_analytic <- EFF |> 
+  mutate(
+    Group_Assignment = factor(Group_Assignment),
+    EFF_sum_change   = POST.EFF.sum - PRE.EFF.sum,
+    EFF_mean_change  = POST.EFF.mean - PRE.EFF.mean
+    #Include_Outliers = PRE.EFF.sum < 30
+  )
+
+# Change-score descriptive table stratified by group
+study.t1.change_eff <- EFF_analytic |> 
+  #filter(Include_Outliers == TRUE) |> 
+  CreateTableOne(
+    vars = c("EFF_sum_change", "EFF_mean_change"),
+    strata = "Group_Assignment",
+    testNormal = "oneway.test"
+  )
+
+study.t1.change_eff |> 
+  print(showAllLevels = TRUE, quote = FALSE, noSpaces = TRUE) |> 
+  kable(caption = "Efficacy (EFF) - Change Score Descriptive Table (Post - Pre)") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+- Average Change in Score for Groups.
+
+```{r}
+## -----------------------------------------------------------------------------
+# Chunk 8: Within-Group Verification (Paired t-tests by Group)
+## -----------------------------------------------------------------------------
+EFF_long <- EFF_analytic |> 
+  #filter(Include_Outliers == TRUE) |> # This does not change the result
+  pivot_longer(
+    cols = c(PRE.EFF.mean, POST.EFF.mean),
+    names_to = "Time",
+    values_to = "EFF_mean"
+  ) |> 
+  mutate(
+    Time = factor(if_else(str_detect(Time, "PRE"), "Pre", "Post"), levels = c("Post", "Pre")) # ifelse ~ Pre=TRUE, Post=FALSE, Pre==1, Post==0, levels = 0,1 (Post, Pre)
+  )
+
+eff_paired_tests <- EFF_long |> 
+  group_by(Group_Assignment) |> 
+  t_test(EFF_mean ~ Time, paired = TRUE, detailed = TRUE) |> 
+  add_significance()
+
+eff_paired_tests |> 
+  select(Group_Assignment, estimate, conf.low, conf.high, statistic, df, p, p.signif) |> 
+  kable(caption = "EFF mean Score - Within-Group Paired t-Tests") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+```{r}
+## -----------------------------------------------------------------------------
+# Chunk 9: Between-Group Models (ANCOVA & Linear Mixed-Effects Model)
+## -----------------------------------------------------------------------------
+# Model 1: ANCOVA (Predicting Post score controlling for Pre-score)
+fit_ancova_eff <- lm(POST.EFF.mean ~ PRE.EFF.mean + Group_Assignment, 
+                     data = EFF_analytic) #|> filter(Include_Outliers == FALSE))
+anova(fit_ancova_eff)
+
+# Model 2: Repeated Measures Linear Mixed-Effects (Group x Time interaction)
+fit_lmm_eff <- lmer(EFF_mean ~ Group_Assignment * Time + (1 | Study_ID), 
+                    data = EFF_long) # |> filter(Include_Outliers == FALSE))
+
+anova(fit_lmm_eff)
+
+# meanmary Outputs
+anova(fit_ancova_eff) |> 
+  broom::tidy() |> 
+  kable(caption = "EFF mean - ANCOVA Model meanmary (Controlling for Pre-Score)") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+anova(fit_lmm_eff) |> 
+  broom::tidy() |> 
+  kable(caption = "EFF mean - Repeated Measures LMM ANOVA (Group * Time)") |> 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+
+## Effect Sizes
+### PSS
+```{r}
+library(emmeans)
+# Partial eta-squared for ANCOVA
+effectsize::eta_squared(fit_ancova, partial = TRUE) #PSS
+# Estimated Marginal Means (Adjusted Group Means at Post)
+emmeans::emmeans(fit_ancova, specs = pairwise ~ Group_Assignment)
+```
+
+### EFF
+```{r}
+# Partial eta-squared for ANCOVA
+effectsize::eta_squared(fit_ancova_eff, partial = TRUE) #EFF
+# Estimated Marginal Means (Adjusted Group Means at Post)
+emmeans::emmeans(fit_ancova_eff, specs = pairwise ~ Group_Assignment)
+```
+
+# Plots
+
+```{r}
+EFF_analytic %>% 
+  filter(Group_Assignment == "Intervention") |> 
+  arrange(PRE.EFF.mean) %>% 
+  mutate(
+    Rank_Order = seq_along(PRE.EFF.mean),
+    Pct_Order = percent_rank(PRE.EFF.mean)
+  ) %>% 
+  ggplot(aes(x = Rank_Order)) +
+  # 1. Add the arrows (vertical segments)
+  geom_segment(aes(
+    xend = Rank_Order, 
+    y = PRE.EFF.mean, 
+    yend = POST.EFF.mean
+  ), 
+  arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
+  color = "gray", 
+  alpha = 0.5) +
+  
+  # 2. Add the PRE points
+  geom_point(aes(y = PRE.EFF.mean, color = "PRE.EFF.mean")) +
+  
+  # 3. Add the POST points
+  geom_point(aes(y = POST.EFF.mean, color = "POST.EFF.mean")) +
+  
+  #4. Grouping...
+  #facet_wrap(~Complete)+
+  
+  # Formatting
+  scale_color_manual(values = c("PRE.EFF.mean" = "red", "POST.EFF.mean" = "blue")) +
+  labs(
+    #title = "Individual Self-Efficacy Score Change (Ranked by PRE Score)",
+    x = "Participant Rank (Low to High PRE Self-Efficacy)",
+    y = "Total Self-Efficacy Score",
+    color = "Timepoint"
+  ) +
+  theme_apa() +#theme_minimal()
+  theme(legend.position = "bottom" )
+```
+
+# NOTES:
+- Efficacy Effects, Non-Significant, does not change with outlier screening. 
+- Potentially needs a longer timescale of interaction.

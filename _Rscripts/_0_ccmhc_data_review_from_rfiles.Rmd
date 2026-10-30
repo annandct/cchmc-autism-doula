@@ -24,8 +24,8 @@ knitr::opts_chunk$set(fig.path = fig_path,
                       message=FALSE, warning=FALSE, cache = FALSE) 
 ```  
 
-# 1. Setup & Data Ingestion
-## 1.1 Libraries
+# 0. Setup & Data Ingestion
+## 0.1 Libraries
 
 ```{r}
 library(dplyr)       # Data manipulation
@@ -42,156 +42,271 @@ library(effectsize)  # effect size & omega squared
 
 ```
 
-## 1.2 Load Data
-### 1.2.0 !! Updated Data File:
-- **UPDATED DATA FILE** - SEFF_Updated...
-  - Both Surveys are connected to a single participant ID (Pre and Post) and collated in one spreadsheet
+
+  
+- **Structure**
+  - **UPDATED DATA FILE** - SEFF_Updated...
+    - Both Surveys are connected to a single participant ID (Pre and Post) and collated in one spreadsheet
   - Will separate each into its own table, for clarity/checks and file write out. 
   - Rejoin and save data files for analysis scripts.
 
-- **Structure**
   - Study_ID (Joined ID across pre and post, unique to participant)
-  - Group Assignment (Control or Intervention)
+  - Group Assignment (Control == 2 or Intervention == 1)
   - Stress Scale: **PSS** - *Perceived Stress Scale* - 10 Questions
-  - SEFF Scale: **EFF** - *Eearly Intervention Parent Self Efficacy* -  14 Questions
-  - Columns as Pre --> Post 
+    - ***Reverse Score Items*** (Done automatically in RedCap Survey Software)
+    - Scoring: PSS scores are obtained by reversing responses (e.g., 0 = 4, 1 = 3, 2 = 2, 3 = 1 & 4 = 0) to the four positively stated items (items 4, 5, 7, & 8) and then summing across all scale items. A short 4 item scale can be made from questions 2, 4, 5 and 10 of the PSS 10 item scale.
+  - SEFF Scale: **EFF** - *Eearly Intervention Parent Self Efficacy* -  16 Questions
+    - **Scoring Guidelines (Guimond et al., 2008):**
+    - Mean/Total scores are computed by aggregating all items of the specific scale.
+    - Reverse Scored Items: 3, 5, 6, 8, 10, 12, 13, 15, 16.
+    - Parent Outcome Expectations: 3, 4, 5, 6, 7, 8, 10, 12, 15, 16.
+    - Parent Competence: 1, 2, 9, 14.
 
-# NEW FILES FROM R CHECK
+
+# 1. Ingest Files
+## Participant Assignments
+```{r}
+Participant_Assignments <- readxl::read_xlsx("../_data/Final participants.xlsx") %>% 
+  # destructive rename and transform
+  transmute(
+    "Assigned_Study_ID_Number" = `ID Number`,
+    "Group_Assignment" = `1 - AD; 2 - control`) %>% 
+    # "Consent" = `Consent form?`,
+    # "Pre_Survey" = `Pre surveys?`,
+    # "Post_Survey" = `Post surveys?`,
+    # "Study_Status" = `Study Status`,
+    # "Number_Doula_Visits" = `Number of doula visits`
+    #         )
+#%>% 
+  # filter for only included data
+#filter(
+#    Consent == "y",
+#    Study_Status %in% c("finished","complete")) %>% 
+  mutate(Group_Assignment = ifelse(Group_Assignment == 1, "Intervention", "Control"))
+```
+
+## PRE-TEST (Info and Scales)
+```{r}
+info_and_pretest.sel <- 
+  read_csv("../_data/FamilyInfoAndPreMeas_DATA_FINAL FOR COLIN.csv") %>% 
+    rename("Assigned_Study_ID_Number" = `participant ID assigned by staff`) |> 
+  ## Select
+  select(
+    Assigned_Study_ID_Number,
+    autismdx,
+    #PSS
+    promis_sc001:promis_sc014, # promis_sc001 is ALREADY REVERSE coded
+    sickchild:confidence_11 # efficacy, cols sickchild:confidence11 - not reverse coded
+)
+
+## Mutate
+info_and_pre.mut <- info_and_pretest.sel |>
+  rename_with(~ paste0("PRE.PSS_Q", 1:10), .cols = promis_sc001:promis_sc014) |> 
+  rename_with(~ paste0("PRE.EFF_Q", 1:16), .cols = sickchild:confidence_11) |> 
+  mutate(across(ends_with(c("EFF_Q3", "EFF_Q5", "EFF_Q6", "EFF_Q8", "EFF_Q10", "EFF_Q12", "EFF_Q13", "EFF_Q15", "EFF_Q16")), 
+                ~ 8 - .)) #  For 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
+  
+## Join for finalized set
+PRE_TEST <- left_join(
+  x = info_and_pre.mut,
+  y = Participant_Assignments,
+  by = "Assigned_Study_ID_Number") |> 
+    select("Study_ID" = Assigned_Study_ID_Number,
+         autismdx, 
+         Group_Assignment,
+         contains("PRE.PSS"),
+         contains("PRE.EFF"))
+
+## Test Set (Calculated Scores only)
+
+PRE_TEST.scores <- PRE_TEST |> 
+  rowwise() |> 
+  transmute(
+    "Study_ID" = Study_ID,
+    Group_Assignment,
+    # CALC Scores
+    "PRE.PSS.sum" = sum(c_across(contains("PRE.PSS")), na.rm=TRUE),
+    "PRE.PSS.mean" = mean(c_across(contains("PRE.PSS")), na.rm=TRUE),
+    "PRE.EFF.sum" = sum(c_across(contains("PRE.EFF_Q")), na.rm=TRUE),
+    "PRE.EFF.mean" = mean(c_across(contains("PRE.EFF_Q")), na.rm=TRUE)) |> 
+  ungroup()
+
+## View
+PRE_TEST.scores |> 
+  kable(caption="PRETEST SCORES") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+## POST-TEST (Scales)
+Data Files:
+- Control Data
+- Post Data 
+  - Has Study ID Number "participant number"
+  - Survey Cols:
+    - PSS Stress:post_upset:post_piling_up
+    - EFF Efficacy: childproblems:difference15 
+## RedCap Downloaded Files
+
 ```{r}
 ## raw_data in CSV format... means we get the numbers (and also some added data - rather than LABELS (strongly agree etc...))
 # read RAWS
 control.csv <- readr::read_csv("../_data/CONTROLPostMeasuresA_DATA_2026-08-24_1126.csv", col_names = TRUE)
-pre.csv <- readr::read_csv("../_data/FamilyInfoAndPreMeas_DATA_2026-08-24_1122.csv", col_names = TRUE)
+#pre.csv <- readr::read_csv("../_data/FamilyInfoAndPreMeas_DATA_2026-08-24_1122.csv", col_names = TRUE)
 post.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_2026-08-24_1123.csv", col_names = TRUE)
 ```
 
-
 ```{r}
-control.csv %>% 
-  kable(caption="Raw Data: Control Group") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
-  scroll_box(height = "400px", width = "100%")
-```
+## Post_TEST Data Ingestion & Combination
 
-## Red Cap Exported :: Raw DATA
+# 1. Combine Control and Intervention Post datasets
+post_combined.raw <- bind_rows(control.csv, post.csv)
 
-```{r}
-pre.csv %>% 
-  kable(caption="Raw Data: Intervention - PRETEST") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
-  scroll_box(height = "400px", width = "100%")
-```
-
-```{r}
-pre.PSS.sel <- pre.csv %>% 
-  select("StudyID" = record_id,
-            #"Group_Assignment" = "Intervention",
-            contains("promis"))
-
-pre.PSS.sel %>% 
-  kable(caption="Raw Data: Intervention - PRETEST") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
-  scroll_box(height = "400px", width = "100%")
-```
-## Big Question: Are these numbers already reversed? 
- - And because we were exporting LABELS (Agree, Strongly Disagree) etc... did that NOT, or ALREADY do the reversing....???
-
-```{r}
-pre.PSS.mut <- pre.PSS.sel %>% 
-  mutate(
-    # CALC WITHOUT REVERSE 
-    "PSS_RAW.sum" = rowSums(select(., 2:11), na.rm=TRUE),
-    "PSS_RAW.mean" = rowMeans(select(.,2:11), na.rm=TRUE))
-
-pre.PSS.REV.mut <- pre.PSS.sel %>%
-  mutate(
-    across(ends_with("_r"), ~ 5 - .)) %>% 
-  mutate(
-    "PSS_REV.sum" = rowSums(select(.,2:11), na.rm=TRUE),
-    "PSS_REV.mean" = rowMeans(select(.,2:11), na.rm=TRUE)
-    )
-
-together <- cbind(
-  pre.PSS.mut %>% select(StudyID, contains(c(".sum",".mean"))),
-  pre.PSS.REV.mut %>% select(contains(c(".sum",".mean")))
+# 2. Select and standardise column names
+post.sel <- post_combined.raw |> 
+  rename("Assigned_Study_ID_Number" = participant_number) |> 
+  select(
+    Assigned_Study_ID_Number,
+    # PSS Stress (10 items)
+    post_upset:post_piling_up,
+    # EFF Efficacy (16 items)
+    child_problems:difference_15
   )
 
-together %>% 
-  kable(caption="BOTH METHODS") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+## Mutate & Reverse Code
+post.mut <- post.sel |> 
+  rename_with(~ paste0("POST.PSS_Q", 1:10), .cols = post_upset:post_piling_up) |> 
+  rename_with(~ paste0("POST.EFF_Q", 1:16), .cols = child_problems:difference_15) |> 
+  mutate(
+    across(
+      ends_with(c("EFF_Q3", "EFF_Q5", "EFF_Q6", "EFF_Q8", "EFF_Q10", "EFF_Q12", "EFF_Q13", "EFF_Q15", "EFF_Q16")), 
+      ~ 8 - .
+    ) # For 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
+  )
+
+## Join for finalized set
+POST_TEST <- left_join(
+  x = post.mut,
+  y = Participant_Assignments,
+  by = "Assigned_Study_ID_Number"
+) |> 
+  select(
+    "Study_ID" = Assigned_Study_ID_Number,
+    Group_Assignment,
+    contains("POST.PSS"),
+    contains("POST.EFF")
+  )
+
+## Test Set (Calculated Scores only)
+POST_TEST.scores <- POST_TEST |> 
+  rowwise() |> 
+  transmute(
+    "Study_ID" = Study_ID,
+    Group_Assignment,
+    # CALC Scores
+    "POST.PSS.sum"  = sum(c_across(contains("POST.PSS")), na.rm = TRUE),
+    "POST.PSS.mean" = mean(c_across(contains("POST.PSS")), na.rm = TRUE),
+    "POST.EFF.sum"  = sum(c_across(contains("POST.EFF_Q")), na.rm = TRUE),
+    "POST.EFF.mean" = mean(c_across(contains("POST.EFF_Q")), na.rm = TRUE)
+  ) |> 
+  ungroup()
+
+## View
+POST_TEST.scores |> 
+  kable(caption = "POSTTEST SCORES") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>% 
   scroll_box(height = "400px", width = "100%")
 ```
 
 
+# Finalize and Write Files
 ```{r}
-together.long <- 
-together %>% 
-  pivot_longer(-1, names_to = "Data_Method", values_to = "Value") %>% 
-  mutate("Method" = ifelse(str_detect(Data_Method, "REV"), "Reverse", "Raw"),
-"Calculation" = ifelse(str_detect(Data_Method, "sum"), "sum", "mean"))
-```
 
+CCMHC_Study_Data_Finalized <- left_join(
+  PRE_TEST |> filter(!is.na(Study_ID)),
+  POST_TEST |> filter(!is.na(Study_ID)),
+  by = c("Study_ID", "Group_Assignment")
+) 
 
-```{r}
-together.long %>% 
-  ggplot(aes(x=Method, y = Value, color = Method, fill = Method))+
-  geom_boxplot(alpha = .25)+
-  geom_jitter()+
-  facet_wrap(~Calculation, scales = "free")
+CCMHC_Study_Scores_Finalized <- left_join(
+  PRE_TEST.scores |> filter(!is.na(Study_ID)),
+  POST_TEST.scores |> filter(!is.na(Study_ID)),
+  by = c("Study_ID", "Group_Assignment")
+) 
 
-
-```
-### CTA THOUGHT:
-- This looks like I should be using the **RAW** column output; (if going from RAW data) e.g.
-- **RED CAP ALREADY REVERSES THE QUESTIONS** (They are tagged as reverse coded)
-- Comparing this to the other data BELOW::
-
-## From previous data wrangling... 
-- StudyID is REDCAP ID!!!
-- Not 100% I trust that
-
-```{r}
-analytic.files <- readRDS("../_output/analytic_files_scored_surveys.Rds")
-PSS.scored <- analytic.files$PSS.Scored
-
-check_joined <- left_join(
-  x = PSS.scored %>% select(StudyID, "PRE_Stress.sum" = PRE_Stress.Total, "PRE_Stress.mean" = PRE_Stress.Mean),
-  y = together,
-  by = "StudyID"
-)
-
-check_joined.m <- check_joined %>% pivot_longer(-1, names_to = "Data_Method", values_to = "Value") %>% 
-  mutate("Method" = ifelse(str_detect(Data_Method, "PRE"), "original", "new"),
-         "REVERSE" = ifelse(str_detect(Data_Method, "REV"), "Reverse", "Raw"),
-         "Calculation" = ifelse(str_detect(Data_Method, "sum"), "sum", "mean"))
-
-check_joined.m %>% 
-  filter(!is.na(Value)) %>% 
-  kable(caption="Comparing Output from REDCAP") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
-  scroll_box(height = "400px", width = "100%")
+save(CCMHC_Study_Data_Finalized, CCMHC_Study_Scores_Finalized,
+     file = "../_output/Analytic_Tables_Finalize_2026-10.Rdata")
 
 ```
 
+# End Ingestion Run
+## --------------------
 
+
+
+# Simple Comparisons
+- Use Rstatix t-tests for pairwise comparisons
+- split out control and intervention via `Group_Assignment`
 ```{r}
-check_joined.m %>% 
-  ggplot(aes(x=Method, y = Value, color = REVERSE, fill = REVERSE))+
-  geom_boxplot(alpha = .25)+
-  geom_jitter()+
-  facet_wrap(~Calculation, scales = "free")
-  
+#rstatix T-Tests
+PSS.t_test.results <- PSS.finalized %>% 
+  rstatix::pairwise_t_test(
+    formula = PRE.PSS.sum ~ POST.PSS.sum,
+    paired = TRUE,
+    #group = Group_Assignment,
+    p.adjust.method = "bonferroni"
+  )
+
+
+PSS.finalized %>% 
+  rstatix::t_test(PRE.PSS.sum ~ Group, 
+                  paired = FALSE, # Intervention v Control
+                  alternative = "two.sided", #any difference 
+                  conf.level = 0.1, 
+                  var.equal = TRUE #levene reject null
+                  ) %>% 
+  mutate("Inference" = ifelse(p < 0.05, "Reject Null - Groups are diff", "Fail to Reject Null (groups same)"))
+
 ```
 
-### -------
 
-# LABEL V RAW
+## EFF
+```{r}
+
+EFF.finalized %>% 
+  filter(Group_Assignment == "Intervention",
+         PRE.EFF.sum > 10) %>% 
+  rstatix::t_test(PRE.EFF.sum ~ POST.EFF.sum, 
+                  paired = TRUE,
+                  alternative = "two.sided", #any difference 
+                  conf.level = 0.1, 
+                  var.equal = TRUE #levene reject null
+                  )
+  mutate("Inference" = ifelse(p < 0.05, "Reject Null - Groups are diff", "Fail to Reject Null (groups same)"))
+```
+
+
+
+
+
+
+
+
+
+
+
+### ---- APPENDIX ----
+
+# LABEL V RAW COMPARISONS
 
 
 ## Red Cap Exported :: LABEL DATA
 
 ```{r}
 post.RAW.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_2026-08-24_1123.csv", col_names = TRUE)
+
+names_from_RAW <- names(post.RAW.csv)
 
 post.RAW.csv %>% 
   filter(!is.na(form_1_timestamp)) %>%
@@ -205,11 +320,12 @@ post.RAW.csv %>%
 ```{r}
 post.LABEL.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_LABELS_2026-08-24_1124.csv", col_names = TRUE)
 
-string_stub <- function(x){paste0(str_sub(x,1,25), "...", str_sub(x,-10,-1))}
+names(post.LABEL.csv) <- names_from_RAW
+#string_stub <- function(x){paste0(str_sub(x,1,25), "...", str_sub(x,-10,-1))}
 #string_stub("In the past month... How often have you felt that you were unable to control the important things in your life?...6")
 
 post.LABEL.csv %>%
-  filter(!is.na(`Survey Timestamp`)) %>%
+  filter(!is.na(form_1_timestamp)) %>%
   select(1:20) %>% 
   #rename_with( ~ifelse(str_length(.) > 30, yes = string_stub(.), .)) %>% 
   kable(caption="LABEL Data: Intervention - POSTTEST") %>% 
@@ -220,6 +336,7 @@ post.LABEL.csv %>%
 
 
 ```{r}
+
 pre.EFF.sel <- pre.csv %>% 
   select("StudyID" = record_id,
             #"Group_Assignment" = "Intervention",
@@ -231,13 +348,6 @@ pre.EFF.sel %>% kable(caption="PRE SURVEY - RAW Output from REDCAP") %>%
   scroll_box(height = "400px", width = "100%")
 ```
 
-
-```{r}
-post.csv %>% 
-  kable(caption="POST SURVEY - RAW Output from REDCAP") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
-  scroll_box(height = "400px", width = "100%")
-```
 
 ## ALL DATA FILE 
 

@@ -1,6 +1,6 @@
 Updated_Analysis; Self-Efficacy (EIPSES)
 ================
-2026-08-20
+2026-09-16
 
 # 0. Setup & Data Ingestion
 
@@ -180,52 +180,52 @@ Intervention
 
 <td style="text-align:right;">
 
-53.6
+0
 </td>
 
 <td style="text-align:right;">
 
-23.1
+0
 </td>
 
 <td style="text-align:right;">
 
-88.9
+0
 </td>
 
 <td style="text-align:right;">
 
-63.0
+63
 </td>
 
 <td style="text-align:right;">
 
-24.0
+24
 </td>
 
 <td style="text-align:right;">
 
-99.0
+99
 </td>
 
 <td style="text-align:right;">
 
-5.36
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.76
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.56
+NaN
 </td>
 
 <td style="text-align:right;">
 
-6.30
+6.3
 </td>
 
 <td style="text-align:right;">
@@ -254,32 +254,32 @@ Intervention
 
 <td style="text-align:right;">
 
-43.0
+43
 </td>
 
 <td style="text-align:right;">
 
-19.0
+19
 </td>
 
 <td style="text-align:right;">
 
-67.0
+67
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
@@ -299,17 +299,17 @@ Intervention
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -328,32 +328,32 @@ Intervention
 
 <td style="text-align:right;">
 
-52.0
+52
 </td>
 
 <td style="text-align:right;">
 
-25.0
+25
 </td>
 
 <td style="text-align:right;">
 
-89.0
+89
 </td>
 
 <td style="text-align:right;">
 
-56.0
+56
 </td>
 
 <td style="text-align:right;">
 
-27.0
+27
 </td>
 
 <td style="text-align:right;">
 
-97.0
+97
 </td>
 
 <td style="text-align:right;">
@@ -373,7 +373,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.60
+5.6
 </td>
 
 <td style="text-align:right;">
@@ -402,62 +402,62 @@ Control
 
 <td style="text-align:right;">
 
-47.8
+4
 </td>
 
 <td style="text-align:right;">
 
-18.1
+1
 </td>
 
 <td style="text-align:right;">
 
-78.1
+5
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
 
-4.78
+2.00
 </td>
 
 <td style="text-align:right;">
 
-4.52
+1.00
 </td>
 
 <td style="text-align:right;">
 
-4.88
+1.67
 </td>
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -476,32 +476,32 @@ Intervention
 
 <td style="text-align:right;">
 
-51.0
+51
 </td>
 
 <td style="text-align:right;">
 
-23.0
+23
 </td>
 
 <td style="text-align:right;">
 
-87.0
+87
 </td>
 
 <td style="text-align:right;">
 
-58.0
+58
 </td>
 
 <td style="text-align:right;">
 
-24.0
+24
 </td>
 
 <td style="text-align:right;">
 
-90.0
+90
 </td>
 
 <td style="text-align:right;">
@@ -521,7 +521,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.80
+5.8
 </td>
 
 <td style="text-align:right;">
@@ -550,62 +550,62 @@ Control
 
 <td style="text-align:right;">
 
-48.8
+5
 </td>
 
 <td style="text-align:right;">
 
-24.1
+7
 </td>
 
 <td style="text-align:right;">
 
-85.1
+12
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
 
-4.88
+2.50
 </td>
 
 <td style="text-align:right;">
 
-6.02
+7.00
 </td>
 
 <td style="text-align:right;">
 
-5.32
+4.00
 </td>
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -624,52 +624,52 @@ Intervention
 
 <td style="text-align:right;">
 
-53.6
+0
 </td>
 
 <td style="text-align:right;">
 
-23.1
+0
 </td>
 
 <td style="text-align:right;">
 
-88.9
+0
 </td>
 
 <td style="text-align:right;">
 
-32.0
+32
 </td>
 
 <td style="text-align:right;">
 
-23.0
+23
 </td>
 
 <td style="text-align:right;">
 
-67.0
+67
 </td>
 
 <td style="text-align:right;">
 
-5.36
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.76
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.56
+NaN
 </td>
 
 <td style="text-align:right;">
 
-3.20
+3.2
 </td>
 
 <td style="text-align:right;">
@@ -698,62 +698,62 @@ Control
 
 <td style="text-align:right;">
 
-56.8
+13
 </td>
 
 <td style="text-align:right;">
 
-23.1
+6
 </td>
 
 <td style="text-align:right;">
 
-92.1
+19
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
 
-5.68
+6.50
 </td>
 
 <td style="text-align:right;">
 
-5.77
+6.00
 </td>
 
 <td style="text-align:right;">
 
-5.76
+6.33
 </td>
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -772,32 +772,32 @@ Intervention
 
 <td style="text-align:right;">
 
-51.0
+51
 </td>
 
 <td style="text-align:right;">
 
-22.0
+22
 </td>
 
 <td style="text-align:right;">
 
-85.0
+85
 </td>
 
 <td style="text-align:right;">
 
-38.0
+38
 </td>
 
 <td style="text-align:right;">
 
-17.0
+17
 </td>
 
 <td style="text-align:right;">
 
-61.0
+61
 </td>
 
 <td style="text-align:right;">
@@ -817,7 +817,7 @@ Intervention
 
 <td style="text-align:right;">
 
-3.80
+3.8
 </td>
 
 <td style="text-align:right;">
@@ -846,32 +846,32 @@ Control
 
 <td style="text-align:right;">
 
-56.0
+56
 </td>
 
 <td style="text-align:right;">
 
-24.0
+24
 </td>
 
 <td style="text-align:right;">
 
-92.0
+92
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
@@ -891,17 +891,17 @@ Control
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -920,32 +920,32 @@ Control
 
 <td style="text-align:right;">
 
-63.0
+63
 </td>
 
 <td style="text-align:right;">
 
-26.0
+26
 </td>
 
 <td style="text-align:right;">
 
-103.0
+103
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
@@ -965,17 +965,17 @@ Control
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -994,32 +994,32 @@ Control
 
 <td style="text-align:right;">
 
-49.0
+49
 </td>
 
 <td style="text-align:right;">
 
-25.0
+25
 </td>
 
 <td style="text-align:right;">
 
-88.0
+88
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
@@ -1039,17 +1039,17 @@ Control
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -1068,32 +1068,32 @@ Intervention
 
 <td style="text-align:right;">
 
-57.0
+57
 </td>
 
 <td style="text-align:right;">
 
-19.0
+19
 </td>
 
 <td style="text-align:right;">
 
-90.0
+90
 </td>
 
 <td style="text-align:right;">
 
-55.0
+55
 </td>
 
 <td style="text-align:right;">
 
-20.0
+20
 </td>
 
 <td style="text-align:right;">
 
-85.0
+85
 </td>
 
 <td style="text-align:right;">
@@ -1113,7 +1113,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.50
+5.5
 </td>
 
 <td style="text-align:right;">
@@ -1142,32 +1142,32 @@ Intervention
 
 <td style="text-align:right;">
 
-50.0
+50
 </td>
 
 <td style="text-align:right;">
 
-25.0
+25
 </td>
 
 <td style="text-align:right;">
 
-88.0
+88
 </td>
 
 <td style="text-align:right;">
 
-49.0
+49
 </td>
 
 <td style="text-align:right;">
 
-22.0
+22
 </td>
 
 <td style="text-align:right;">
 
-83.0
+83
 </td>
 
 <td style="text-align:right;">
@@ -1187,7 +1187,7 @@ Intervention
 
 <td style="text-align:right;">
 
-4.90
+4.9
 </td>
 
 <td style="text-align:right;">
@@ -1216,32 +1216,32 @@ Intervention
 
 <td style="text-align:right;">
 
-52.0
+52
 </td>
 
 <td style="text-align:right;">
 
-24.0
+24
 </td>
 
 <td style="text-align:right;">
 
-88.0
+88
 </td>
 
 <td style="text-align:right;">
 
-55.0
+55
 </td>
 
 <td style="text-align:right;">
 
-23.0
+23
 </td>
 
 <td style="text-align:right;">
 
-90.0
+90
 </td>
 
 <td style="text-align:right;">
@@ -1261,7 +1261,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.50
+5.5
 </td>
 
 <td style="text-align:right;">
@@ -1290,32 +1290,32 @@ Intervention
 
 <td style="text-align:right;">
 
-62.0
+62
 </td>
 
 <td style="text-align:right;">
 
-27.0
+27
 </td>
 
 <td style="text-align:right;">
 
-103.0
+103
 </td>
 
 <td style="text-align:right;">
 
-46.0
+46
 </td>
 
 <td style="text-align:right;">
 
-26.0
+26
 </td>
 
 <td style="text-align:right;">
 
-84.0
+84
 </td>
 
 <td style="text-align:right;">
@@ -1335,7 +1335,7 @@ Intervention
 
 <td style="text-align:right;">
 
-4.60
+4.6
 </td>
 
 <td style="text-align:right;">
@@ -1364,37 +1364,37 @@ Intervention
 
 <td style="text-align:right;">
 
-57.7
+53
 </td>
 
 <td style="text-align:right;">
 
-25.0
+25
 </td>
 
 <td style="text-align:right;">
 
-95.7
+91
 </td>
 
 <td style="text-align:right;">
 
-60.0
+60
 </td>
 
 <td style="text-align:right;">
 
-24.0
+24
 </td>
 
 <td style="text-align:right;">
 
-98.0
+98
 </td>
 
 <td style="text-align:right;">
 
-5.77
+5.89
 </td>
 
 <td style="text-align:right;">
@@ -1404,12 +1404,12 @@ Intervention
 
 <td style="text-align:right;">
 
-5.98
+6.07
 </td>
 
 <td style="text-align:right;">
 
-6.00
+6.0
 </td>
 
 <td style="text-align:right;">
@@ -1438,32 +1438,32 @@ Intervention
 
 <td style="text-align:right;">
 
-59.0
+59
 </td>
 
 <td style="text-align:right;">
 
-26.0
+26
 </td>
 
 <td style="text-align:right;">
 
-96.0
+96
 </td>
 
 <td style="text-align:right;">
 
-50.0
+50
 </td>
 
 <td style="text-align:right;">
 
-24.0
+24
 </td>
 
 <td style="text-align:right;">
 
-86.0
+86
 </td>
 
 <td style="text-align:right;">
@@ -1483,7 +1483,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.00
+5.0
 </td>
 
 <td style="text-align:right;">
@@ -1512,32 +1512,32 @@ Intervention
 
 <td style="text-align:right;">
 
-53.0
+53
 </td>
 
 <td style="text-align:right;">
 
-17.0
+17
 </td>
 
 <td style="text-align:right;">
 
-82.0
+82
 </td>
 
 <td style="text-align:right;">
 
-70.0
+70
 </td>
 
 <td style="text-align:right;">
 
-28.0
+28
 </td>
 
 <td style="text-align:right;">
 
-112.0
+112
 </td>
 
 <td style="text-align:right;">
@@ -1557,7 +1557,7 @@ Intervention
 
 <td style="text-align:right;">
 
-7.00
+7.0
 </td>
 
 <td style="text-align:right;">
@@ -1586,32 +1586,32 @@ Intervention
 
 <td style="text-align:right;">
 
-49.0
+49
 </td>
 
 <td style="text-align:right;">
 
-20.0
+20
 </td>
 
 <td style="text-align:right;">
 
-80.0
+80
 </td>
 
 <td style="text-align:right;">
 
-56.0
+56
 </td>
 
 <td style="text-align:right;">
 
-25.0
+25
 </td>
 
 <td style="text-align:right;">
 
-92.0
+92
 </td>
 
 <td style="text-align:right;">
@@ -1631,7 +1631,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.60
+5.6
 </td>
 
 <td style="text-align:right;">
@@ -1660,52 +1660,52 @@ Intervention
 
 <td style="text-align:right;">
 
-53.6
+0
 </td>
 
 <td style="text-align:right;">
 
-23.1
+0
 </td>
 
 <td style="text-align:right;">
 
-88.9
+0
 </td>
 
 <td style="text-align:right;">
 
-54.0
+54
 </td>
 
 <td style="text-align:right;">
 
-18.0
+18
 </td>
 
 <td style="text-align:right;">
 
-84.0
+84
 </td>
 
 <td style="text-align:right;">
 
-5.36
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.76
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.56
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.40
+5.4
 </td>
 
 <td style="text-align:right;">
@@ -1734,32 +1734,32 @@ Intervention
 
 <td style="text-align:right;">
 
-58.0
+58
 </td>
 
 <td style="text-align:right;">
 
-24.0
+24
 </td>
 
 <td style="text-align:right;">
 
-95.0
+95
 </td>
 
 <td style="text-align:right;">
 
-58.0
+58
 </td>
 
 <td style="text-align:right;">
 
-27.0
+27
 </td>
 
 <td style="text-align:right;">
 
-97.0
+97
 </td>
 
 <td style="text-align:right;">
@@ -1779,7 +1779,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.80
+5.8
 </td>
 
 <td style="text-align:right;">
@@ -1808,32 +1808,32 @@ Intervention
 
 <td style="text-align:right;">
 
-50.0
+50
 </td>
 
 <td style="text-align:right;">
 
-21.0
+21
 </td>
 
 <td style="text-align:right;">
 
-83.0
+83
 </td>
 
 <td style="text-align:right;">
 
-54.0
+54
 </td>
 
 <td style="text-align:right;">
 
-26.0
+26
 </td>
 
 <td style="text-align:right;">
 
-93.0
+93
 </td>
 
 <td style="text-align:right;">
@@ -1853,7 +1853,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.40
+5.4
 </td>
 
 <td style="text-align:right;">
@@ -1882,32 +1882,32 @@ Intervention
 
 <td style="text-align:right;">
 
-58.0
+58
 </td>
 
 <td style="text-align:right;">
 
-26.0
+26
 </td>
 
 <td style="text-align:right;">
 
-98.0
+98
 </td>
 
 <td style="text-align:right;">
 
-53.0
+53
 </td>
 
 <td style="text-align:right;">
 
-19.0
+19
 </td>
 
 <td style="text-align:right;">
 
-83.0
+83
 </td>
 
 <td style="text-align:right;">
@@ -1927,7 +1927,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.30
+5.3
 </td>
 
 <td style="text-align:right;">
@@ -1956,52 +1956,52 @@ Intervention
 
 <td style="text-align:right;">
 
-53.6
+0
 </td>
 
 <td style="text-align:right;">
 
-23.1
+0
 </td>
 
 <td style="text-align:right;">
 
-88.9
+0
 </td>
 
 <td style="text-align:right;">
 
-56.0
+56
 </td>
 
 <td style="text-align:right;">
 
-23.0
+23
 </td>
 
 <td style="text-align:right;">
 
-92.0
+92
 </td>
 
 <td style="text-align:right;">
 
-5.36
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.76
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.56
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.60
+5.6
 </td>
 
 <td style="text-align:right;">
@@ -2030,32 +2030,32 @@ Intervention
 
 <td style="text-align:right;">
 
-43.0
+43
 </td>
 
 <td style="text-align:right;">
 
-19.0
+19
 </td>
 
 <td style="text-align:right;">
 
-74.0
+74
 </td>
 
 <td style="text-align:right;">
 
-54.0
+54
 </td>
 
 <td style="text-align:right;">
 
-22.0
+22
 </td>
 
 <td style="text-align:right;">
 
-89.0
+89
 </td>
 
 <td style="text-align:right;">
@@ -2075,7 +2075,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.40
+5.4
 </td>
 
 <td style="text-align:right;">
@@ -2104,32 +2104,32 @@ Intervention
 
 <td style="text-align:right;">
 
-60.0
+60
 </td>
 
 <td style="text-align:right;">
 
-25.0
+25
 </td>
 
 <td style="text-align:right;">
 
-96.0
+96
 </td>
 
 <td style="text-align:right;">
 
-55.0
+55
 </td>
 
 <td style="text-align:right;">
 
-21.0
+21
 </td>
 
 <td style="text-align:right;">
 
-86.0
+86
 </td>
 
 <td style="text-align:right;">
@@ -2149,7 +2149,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.50
+5.5
 </td>
 
 <td style="text-align:right;">
@@ -2178,32 +2178,32 @@ Intervention
 
 <td style="text-align:right;">
 
-60.0
+60
 </td>
 
 <td style="text-align:right;">
 
-28.0
+28
 </td>
 
 <td style="text-align:right;">
 
-101.0
+101
 </td>
 
 <td style="text-align:right;">
 
-52.0
+52
 </td>
 
 <td style="text-align:right;">
 
-19.0
+19
 </td>
 
 <td style="text-align:right;">
 
-82.0
+82
 </td>
 
 <td style="text-align:right;">
@@ -2223,7 +2223,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.20
+5.2
 </td>
 
 <td style="text-align:right;">
@@ -2252,32 +2252,32 @@ Intervention
 
 <td style="text-align:right;">
 
-56.0
+56
 </td>
 
 <td style="text-align:right;">
 
-23.0
+23
 </td>
 
 <td style="text-align:right;">
 
-91.0
+91
 </td>
 
 <td style="text-align:right;">
 
-52.0
+52
 </td>
 
 <td style="text-align:right;">
 
-18.0
+18
 </td>
 
 <td style="text-align:right;">
 
-83.0
+83
 </td>
 
 <td style="text-align:right;">
@@ -2297,7 +2297,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.20
+5.2
 </td>
 
 <td style="text-align:right;">
@@ -2326,32 +2326,32 @@ Intervention
 
 <td style="text-align:right;">
 
-50.0
+50
 </td>
 
 <td style="text-align:right;">
 
-20.0
+20
 </td>
 
 <td style="text-align:right;">
 
-83.0
+83
 </td>
 
 <td style="text-align:right;">
 
-54.0
+54
 </td>
 
 <td style="text-align:right;">
 
-23.0
+23
 </td>
 
 <td style="text-align:right;">
 
-89.0
+89
 </td>
 
 <td style="text-align:right;">
@@ -2371,7 +2371,7 @@ Intervention
 
 <td style="text-align:right;">
 
-5.40
+5.4
 </td>
 
 <td style="text-align:right;">
@@ -2400,62 +2400,62 @@ Control
 
 <td style="text-align:right;">
 
-53.8
+10
 </td>
 
 <td style="text-align:right;">
 
-24.1
+7
 </td>
 
 <td style="text-align:right;">
 
-90.1
+17
 </td>
 
 <td style="text-align:right;">
 
-53.5
+0
 </td>
 
 <td style="text-align:right;">
 
-22.7
+0
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0
 </td>
 
 <td style="text-align:right;">
 
-5.38
+5.00
 </td>
 
 <td style="text-align:right;">
 
-6.02
+7.00
 </td>
 
 <td style="text-align:right;">
 
-5.63
+5.67
 </td>
 
 <td style="text-align:right;">
 
-5.35
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.68
+NaN
 </td>
 
 <td style="text-align:right;">
 
-5.50
+NaN
 </td>
 
 </tr>
@@ -2471,8 +2471,8 @@ Control
 ``` r
 library(tableone)
 EFF.t1 <- 
+  EFF.scored %>% 
 tableone::CreateTableOne(
-  data = EFF.scored,
   vars = c("PRE_Overall_SEFF.Mean", "POST_Overall_SEFF.Mean","PRE_Parent_Outcome_Expectations.Mean", "POST_Parent_Outcome_Expectations.Mean","PRE_Parent_Competence.Mean", "POST_Parent_Competence.Mean"),
   strata = "Group_Assignment",
   factorVars = c("Group_Assignment"),
@@ -2486,21 +2486,21 @@ EFF.t1 %>%   print(showAllLevels = TRUE, quote = FALSE, noSpaces = TRUE) %>%
     ##                                                    Stratified by Group_Assignment
     ##                                                     level Control    
     ##   n                                                       7          
-    ##   PRE_Overall_SEFF.Mean (mean (SD))                       5.61 (0.47)
-    ##   POST_Overall_SEFF.Mean (mean (SD))                      5.49 (0.00)
-    ##   PRE_Parent_Outcome_Expectations.Mean (mean (SD))        5.36 (0.55)
-    ##   POST_Parent_Outcome_Expectations.Mean (mean (SD))       5.35 (0.00)
-    ##   PRE_Parent_Competence.Mean (mean (SD))                  5.87 (0.64)
-    ##   POST_Parent_Competence.Mean (mean (SD))                 5.68 (0.00)
+    ##   PRE_Overall_SEFF.Mean (mean (SD))                       5.05 (1.69)
+    ##   POST_Overall_SEFF.Mean (mean (SD))                      NaN (NA)   
+    ##   PRE_Parent_Outcome_Expectations.Mean (mean (SD))        4.69 (1.77)
+    ##   POST_Parent_Outcome_Expectations.Mean (mean (SD))       NaN (NA)   
+    ##   PRE_Parent_Competence.Mean (mean (SD))                  5.68 (2.11)
+    ##   POST_Parent_Competence.Mean (mean (SD))                 NaN (NA)   
     ##                                                    Stratified by Group_Assignment
     ##                                                     Intervention p     test
     ##   n                                                 24                     
-    ##   PRE_Overall_SEFF.Mean (mean (SD))                 5.54 (0.51)  0.743     
-    ##   POST_Overall_SEFF.Mean (mean (SD))                5.49 (0.63)  1.000     
-    ##   PRE_Parent_Outcome_Expectations.Mean (mean (SD))  5.36 (0.49)  0.999     
-    ##   POST_Parent_Outcome_Expectations.Mean (mean (SD)) 5.35 (0.74)  1.000     
-    ##   PRE_Parent_Competence.Mean (mean (SD))            5.73 (0.71)  0.646     
-    ##   POST_Parent_Competence.Mean (mean (SD))           5.68 (0.76)  1.000
+    ##   PRE_Overall_SEFF.Mean (mean (SD))                 5.54 (0.57)  0.258     
+    ##   POST_Overall_SEFF.Mean (mean (SD))                5.49 (0.65)  NA        
+    ##   PRE_Parent_Outcome_Expectations.Mean (mean (SD))  5.36 (0.55)  0.132     
+    ##   POST_Parent_Outcome_Expectations.Mean (mean (SD)) 5.35 (0.76)  NA        
+    ##   PRE_Parent_Competence.Mean (mean (SD))            5.72 (0.78)  0.932     
+    ##   POST_Parent_Competence.Mean (mean (SD))           5.68 (0.78)  NA
 
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
 
@@ -2594,17 +2594,17 @@ PRE_Overall_SEFF.Mean (mean (SD))
 
 <td style="text-align:left;">
 
-5.61 (0.47)
+5.05 (1.69)
 </td>
 
 <td style="text-align:left;">
 
-5.54 (0.51)
+5.54 (0.57)
 </td>
 
 <td style="text-align:left;">
 
-0.743
+0.258
 </td>
 
 <td style="text-align:left;">
@@ -2626,17 +2626,17 @@ POST_Overall_SEFF.Mean (mean (SD))
 
 <td style="text-align:left;">
 
-5.49 (0.00)
+NaN (NA)
 </td>
 
 <td style="text-align:left;">
 
-5.49 (0.63)
+5.49 (0.65)
 </td>
 
 <td style="text-align:left;">
 
-1.000
+NA
 </td>
 
 <td style="text-align:left;">
@@ -2658,17 +2658,17 @@ PRE_Parent_Outcome_Expectations.Mean (mean (SD))
 
 <td style="text-align:left;">
 
+4.69 (1.77)
+</td>
+
+<td style="text-align:left;">
+
 5.36 (0.55)
 </td>
 
 <td style="text-align:left;">
 
-5.36 (0.49)
-</td>
-
-<td style="text-align:left;">
-
-0.999
+0.132
 </td>
 
 <td style="text-align:left;">
@@ -2690,17 +2690,17 @@ POST_Parent_Outcome_Expectations.Mean (mean (SD))
 
 <td style="text-align:left;">
 
-5.35 (0.00)
+NaN (NA)
 </td>
 
 <td style="text-align:left;">
 
-5.35 (0.74)
+5.35 (0.76)
 </td>
 
 <td style="text-align:left;">
 
-1.000
+NA
 </td>
 
 <td style="text-align:left;">
@@ -2722,17 +2722,17 @@ PRE_Parent_Competence.Mean (mean (SD))
 
 <td style="text-align:left;">
 
-5.87 (0.64)
+5.68 (2.11)
 </td>
 
 <td style="text-align:left;">
 
-5.73 (0.71)
+5.72 (0.78)
 </td>
 
 <td style="text-align:left;">
 
-0.646
+0.932
 </td>
 
 <td style="text-align:left;">
@@ -2754,17 +2754,17 @@ POST_Parent_Competence.Mean (mean (SD))
 
 <td style="text-align:left;">
 
-5.68 (0.00)
+NaN (NA)
 </td>
 
 <td style="text-align:left;">
 
-5.68 (0.76)
+5.68 (0.78)
 </td>
 
 <td style="text-align:left;">
 
-1.000
+NA
 </td>
 
 <td style="text-align:left;">
@@ -2895,7 +2895,7 @@ Overall_SEFF
 
 <td style="text-align:right;">
 
-0
+NA
 </td>
 
 <td style="text-align:right;">
@@ -2905,7 +2905,7 @@ Overall_SEFF
 
 <td style="text-align:right;">
 
-0.63
+0.65
 </td>
 
 <td style="text-align:right;">
@@ -2944,7 +2944,7 @@ Parent_Competence
 
 <td style="text-align:right;">
 
-0
+NA
 </td>
 
 <td style="text-align:right;">
@@ -2954,7 +2954,7 @@ Parent_Competence
 
 <td style="text-align:right;">
 
-0.76
+0.78
 </td>
 
 <td style="text-align:right;">
@@ -2993,7 +2993,7 @@ Parent_Outcome_Expectations
 
 <td style="text-align:right;">
 
-0
+NA
 </td>
 
 <td style="text-align:right;">
@@ -3003,7 +3003,7 @@ Parent_Outcome_Expectations
 
 <td style="text-align:right;">
 
-0.74
+0.76
 </td>
 
 <td style="text-align:right;">
@@ -3042,7 +3042,7 @@ Overall_SEFF
 
 <td style="text-align:right;">
 
-0
+NA
 </td>
 
 <td style="text-align:right;">
@@ -3052,7 +3052,7 @@ Overall_SEFF
 
 <td style="text-align:right;">
 
-0.51
+0.57
 </td>
 
 <td style="text-align:right;">
@@ -3091,17 +3091,17 @@ Parent_Competence
 
 <td style="text-align:right;">
 
-0
+NA
 </td>
 
 <td style="text-align:right;">
 
-5.73
+5.72
 </td>
 
 <td style="text-align:right;">
 
-0.71
+0.78
 </td>
 
 <td style="text-align:right;">
@@ -3140,7 +3140,7 @@ Parent_Outcome_Expectations
 
 <td style="text-align:right;">
 
-0
+NA
 </td>
 
 <td style="text-align:right;">
@@ -3150,7 +3150,7 @@ Parent_Outcome_Expectations
 
 <td style="text-align:right;">
 
-0.49
+0.55
 </td>
 
 <td style="text-align:right;">
@@ -3271,7 +3271,7 @@ PRE
 
 <td style="text-align:right;">
 
-0.689
+0.686
 </td>
 
 </tr>
@@ -3404,22 +3404,22 @@ Intervention
 
 <td style="text-align:right;">
 
-88.6
+73.6
 </td>
 
 <td style="text-align:right;">
 
-8.17
+34.6
 </td>
 
 <td style="text-align:right;">
 
-87.9
+84.2
 </td>
 
 <td style="text-align:right;">
 
-10.1
+20.6
 </td>
 
 </tr>
@@ -3438,17 +3438,17 @@ Control
 
 <td style="text-align:right;">
 
-89.8
+48.0
 </td>
 
 <td style="text-align:right;">
 
-7.60
+43.8
 </td>
 
 <td style="text-align:right;">
 
-87.9
+0.0
 </td>
 
 <td style="text-align:right;">
@@ -3465,10 +3465,51 @@ Control
 ### 2.2 Outlier Identification
 
 ``` r
-EFF.check <- EFF.scored %>% mutate(Filter_Diff = POST_Overall_SEFF.Mean - PRE_Overall_SEFF.Mean,
-                                   Filter_Diff = ifelse(Group_Assignment == "Control", NA, Filter_Diff))
+EFF.check <- EFF.scored %>% 
+  mutate(
+    across(contains(c(".Sum", ".Mean")), ~ifelse(.==0, NA, .)), 
+    Filter_Diff = POST_Overall_SEFF.Sum - PRE_Overall_SEFF.Sum,
+    Filter_Diff = ifelse(Group_Assignment == "Control", NA, Filter_Diff)) %>% 
+  rowwise() %>% 
+  mutate(
+    Complete = ifelse(any(is.na(c_across(contains("_Q")))), "Incomplete", "Complete")
+  ) %>% 
+  ungroup()
+
+EFF.check %>% ggplot(aes(x=Filter_Diff))+ geom_histogram()
+```
+
+![](_plot_images/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+library(magrittr)
+EFF.check %>% select(contains(c(".Sum", ".Mean", "Complete")))
+```
+
+    ## # A tibble: 31 × 13
+    ##    PRE_Parent_Outcome_Expectations…¹ PRE_Parent_Competenc…² PRE_Overall_SEFF.Sum
+    ##                                <dbl>                  <dbl>                <dbl>
+    ##  1                                NA                     NA                   NA
+    ##  2                                43                     19                   67
+    ##  3                                52                     25                   89
+    ##  4                                 4                      1                    5
+    ##  5                                51                     23                   87
+    ##  6                                 5                      7                   12
+    ##  7                                NA                     NA                   NA
+    ##  8                                13                      6                   19
+    ##  9                                51                     22                   85
+    ## 10                                56                     24                   92
+    ## # ℹ 21 more rows
+    ## # ℹ abbreviated names: ¹​PRE_Parent_Outcome_Expectations.Sum,
+    ## #   ²​PRE_Parent_Competence.Sum
+    ## # ℹ 10 more variables: POST_Parent_Outcome_Expectations.Sum <dbl>,
+    ## #   POST_Parent_Competence.Sum <dbl>, POST_Overall_SEFF.Sum <dbl>,
+    ## #   PRE_Parent_Outcome_Expectations.Mean <dbl>,
+    ## #   PRE_Parent_Competence.Mean <dbl>, PRE_Overall_SEFF.Mean <dbl>, …
+
+``` r
 #Control scores changed to NA and then ignored
-f.mn <- mean(EFF.check$Filter_Diff, na.rm = TRUE)
+f.mn <- mean(EFF.check$Filter_Diff[EFF.check$Complete == "Complete"], na.rm=TRUE)
 f.sd <- sd(EFF.check$Filter_Diff, na.rm = TRUE)
 
 EFF.check <- EFF.check %>% 
@@ -3483,7 +3524,7 @@ EFF.check %>%
   theme_minimal()
 ```
 
-![](_plot_images/unnamed-chunk-11-1.png)<!-- -->
+![](_plot_images/unnamed-chunk-11-2.png)<!-- -->
 
 # 3. Statistical Tests
 
@@ -3506,8 +3547,8 @@ EFF.check %>% filter(Group_Assignment == "Intervention") %>% rstatix::shapiro_te
     ## # A tibble: 2 × 4
     ##   variable               statistic      p Normality                   
     ##   <chr>                      <dbl>  <dbl> <chr>                       
-    ## 1 POST_Overall_SEFF.Mean     0.916 0.0482 Reject Null (Non-Normal)    
-    ## 2 PRE_Overall_SEFF.Mean      0.954 0.335  Fail to Reject Null (Normal)
+    ## 1 POST_Overall_SEFF.Mean     0.921 0.0687 Fail to Reject Null (Normal)
+    ## 2 PRE_Overall_SEFF.Mean      0.968 0.702  Fail to Reject Null (Normal)
 
 ``` r
 EFF.check %>% 
@@ -3517,9 +3558,9 @@ EFF.check %>%
 ```
 
     ## # A tibble: 1 × 4
-    ##   variable              statistic     p Normality                   
-    ##   <chr>                     <dbl> <dbl> <chr>                       
-    ## 1 PRE_Overall_SEFF.Mean     0.956 0.782 Fail to Reject Null (Normal)
+    ##   variable              statistic      p Normality               
+    ##   <chr>                     <dbl>  <dbl> <chr>                   
+    ## 1 PRE_Overall_SEFF.Mean     0.803 0.0435 Reject Null (Non-Normal)
 
 ``` r
 EFF.check %>% rstatix::levene_test(PRE_Overall_SEFF.Mean ~ Group_Assignment) %>% 
@@ -3527,23 +3568,17 @@ EFF.check %>% rstatix::levene_test(PRE_Overall_SEFF.Mean ~ Group_Assignment) %>%
 ```
 
     ## # A tibble: 1 × 5
-    ##     df1   df2 statistic     p `Equal Variance`                   
-    ##   <int> <int>     <dbl> <dbl> <chr>                              
-    ## 1     1    29    0.0644 0.801 Fail to Reject Null (Standard Test)
+    ##     df1   df2 statistic      p `Equal Variance`                   
+    ##   <int> <int>     <dbl>  <dbl> <chr>                              
+    ## 1     1    25      3.41 0.0767 Fail to Reject Null (Standard Test)
 
 **fail to reject null; standard t-test is fine**
 
-``` r
-EFF.check %>% rstatix::levene_test(POST_Overall_SEFF.Mean ~ Group_Assignment) %>% 
-  mutate("Equal Variance" = ifelse(p < 0.05, "Reject Null (Adjust Test)", "Fail to Reject Null (Standard Test)"))
-```
-
-    ## # A tibble: 1 × 5
-    ##     df1   df2 statistic      p `Equal Variance`         
-    ##   <int> <int>     <dbl>  <dbl> <chr>                    
-    ## 1     1    29      6.20 0.0187 Reject Null (Adjust Test)
+- Note: Can’t check against Controls here
 
 ``` r
+# EFF.check %>% rstatix::levene_test(POST_Overall_SEFF.Mean ~ Group_Assignment) %>% 
+#   mutate("Equal Variance" = ifelse(p < 0.05, "Reject Null (Adjust Test)", "Fail to Reject Null (Standard Test)"))
 ## reject null: use POOLED variance (or Welch's) ; likely to be the case given that Inervention POST was non-normal. 
 ```
 
@@ -3565,7 +3600,7 @@ EFF.check %>%
     ## # A tibble: 1 × 9
     ##   .y.                  group1 group2    n1    n2 statistic    df     p Inference
     ##   <chr>                <chr>  <chr>  <int> <int>     <dbl> <dbl> <dbl> <chr>    
-    ## 1 PRE_Overall_SEFF.Me… Contr… Inter…     7    24     0.331    29 0.743 Fail to …
+    ## 1 PRE_Overall_SEFF.Me… Contr… Inter…     7    20     -1.16    25 0.258 Fail to …
 
 - Not reading too much in yet as control sample is so small; (n=7).
 - With no difference here, we will see if Pre –\> Post Intervention
@@ -3601,9 +3636,9 @@ t_test_results
     ## # A tibble: 3 × 16
     ##   Composite_Type  estimate .y.   group1 group2    n1    n2 statistic     p    df
     ## * <chr>              <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl> <dbl> <dbl>
-    ## 1 Overall_SEFF      0.0452 Score PRE    POST      24    24    0.257  0.4      23
-    ## 2 Parent_Compete…   0.0465 Score PRE    POST      24    24    0.205  0.42     23
-    ## 3 Parent_Outcome…   0.0106 Score PRE    POST      24    24    0.0573 0.477    23
+    ## 1 Overall_SEFF      0.0857 Score PRE    POST      20    23     0.442 0.332    18
+    ## 2 Parent_Compete…   0.0526 Score PRE    POST      20    23     0.191 0.425    18
+    ## 3 Parent_Outcome…   0.0257 Score PRE    POST      20    23     0.137 0.446    18
     ## # ℹ 6 more variables: conf.low <dbl>, conf.high <dbl>, method <chr>,
     ## #   alternative <chr>, p.adj <dbl>, p.adj.signif <chr>
 
@@ -3620,9 +3655,9 @@ EFF.long %>%
     ## # A tibble: 3 × 8
     ##   Composite_Type              .y.   group1 group2    n1    n2 statistic     p
     ## * <chr>                       <chr> <chr>  <chr>  <int> <int>     <dbl> <dbl>
-    ## 1 Overall_SEFF                Score PRE    POST      24    24      159  0.404
-    ## 2 Parent_Competence           Score PRE    POST      24    24      162  0.371
-    ## 3 Parent_Outcome_Expectations Score PRE    POST      24    24      130. 0.596
+    ## 1 Overall_SEFF                Score PRE    POST      20    23     107   0.322
+    ## 2 Parent_Competence           Score PRE    POST      20    23     101   0.412
+    ## 3 Parent_Outcome_Expectations Score PRE    POST      20    23      88.5 0.457
 
 ## Interpretation
 
@@ -3650,6 +3685,46 @@ EFF.long %>%
 ```
 
 ``` r
+EFF.check %>% select(contains("Overall_SEFF.Mean")) %>% rstatix::cor_test(method = "kendall") 
+```
+
+    ## # A tibble: 1 × 6
+    ##   var1                  var2                     cor statistic     p method 
+    ##   <chr>                 <chr>                  <dbl>     <dbl> <dbl> <chr>  
+    ## 1 PRE_Overall_SEFF.Mean POST_Overall_SEFF.Mean -0.23     -1.34 0.181 Kendall
+
+``` r
+lm(POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean, data = EFF.check) %>% summary()
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean, 
+    ##     data = EFF.check)
+    ## 
+    ## Residuals:
+    ##    Min     1Q Median     3Q    Max 
+    ## -1.780 -0.218 -0.066  0.141  1.367 
+    ## 
+    ## Coefficients:
+    ##                       Estimate Std. Error t value Pr(>|t|)   
+    ## (Intercept)              6.761      1.732    3.90   0.0011 **
+    ## PRE_Overall_SEFF.Mean   -0.220      0.307   -0.72   0.4840   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 0.626 on 17 degrees of freedom
+    ##   (12 observations deleted due to missingness)
+    ## Multiple R-squared:  0.0292, Adjusted R-squared:  -0.0279 
+    ## F-statistic: 0.512 on 1 and 17 DF,  p-value: 0.484
+
+``` r
+lm(POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean, data = EFF.check) %>% plot()
+```
+
+![](_plot_images/unnamed-chunk-20-1.png)<!-- -->![](_plot_images/unnamed-chunk-20-2.png)<!-- -->![](_plot_images/unnamed-chunk-20-3.png)<!-- -->![](_plot_images/unnamed-chunk-20-4.png)<!-- -->
+
+``` r
 ## Does the intervention group change pre to post test?
 # EFF.test.long <- EFF.check %>% 
 #   filter(Filter_Criterion == "Include") %>%
@@ -3673,18 +3748,34 @@ EFF.long %>%
 ```
 
 ``` r
-# EFF.check %>% 
-#   filter(Filter_Criterion == "Include") %>%
-#   filter(Group_Assignment == "Intervention") %>% 
-#   select(StudyID, contains("Parent_Competence.Mean")) %>%  
-#   pivot_longer(cols = contains(c("Overall", "Parent")), names_to = "Composite", values_to = "Score") %>% 
+# EFF.check %>%
+#   #filter(Filter_Criterion == "Include") %>%
+#   filter(Group_Assignment == "Intervention") %>%
+#   select(StudyID, contains(".Mean")) %>%
+#   pivot_longer(cols = contains(c("Overall", "Parent")), names_to = "Composite", values_to = "Score") %>%
 #   mutate(
 #     Timepoint = if_else(str_detect(Composite, "PRE_"), "Pre-Test", "Post-Test"),
 #     Timepoint = factor(Timepoint, levels = c("Pre-Test", "Post-Test")),
-#   ) %>% 
+#   ) %>%
+#   mutate(Composite_Type = str_replace_all(Composite, "_", " ")) %>% 
+#   ggboxplot(
+#     x = "Timepoint", y = "Score",
+#     color = "Condition", palette = "jco",
+#     add = "jitter",
+#     facet.by = "Composite",
+#     short.panel.labs = TRUE
+#   ) +
+#   labs(
+#     title = "Composite Scores: Pre-Test vs. Post-Test",
+#     x = "Timepoint",
+#     y = "Mean Score"
+#   ) +
+#   theme_minimal() +
+#   theme(legend.position = "none")
+# 
 # 
 # # Run Paired T-Tests
-# #EFF.t_test_results <- EFF.test.long %>%
+# EFF.t_test_results <- EFF.test.long %>%
 #   rstatix::pairwise_t_test(Score ~ Timepoint, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "greater", pool.sd=TRUE)
 #   #adjust_pvalue(method = "holm") %>%
 #   #add_significance("p.adj")
@@ -3707,7 +3798,7 @@ EFF.check %>%
     ## # A tibble: 1 × 7
     ##   .y.                    group1 group2         n statistic    df     p
     ## * <chr>                  <chr>  <chr>      <int>     <dbl> <dbl> <dbl>
-    ## 1 POST_Overall_SEFF.Mean 1      null model    24     0.190    23 0.851
+    ## 1 POST_Overall_SEFF.Mean 1      null model    23     0.182    22 0.857
 
 - Post Self-Efficacy Sample is NOT significantly different from the
   normed (race group) or control.
@@ -3742,36 +3833,41 @@ library(patchwork)
 EFF.pre_boxplot + EFF.post_boxplot + plot_annotation(title = "EFF - Pre/Post Self-Efficacy Scores by Group Assignment")
 ```
 
-![](_plot_images/unnamed-chunk-23-1.png)<!-- -->
+![](_plot_images/unnamed-chunk-24-1.png)<!-- -->
 
 ## 4.1 Change in Total Scores (Arrow Plot)
 
 ``` r
-EFF.scored %>% 
-  arrange(PRE_Overall_SEFF.Mean) %>% 
+EFF.check %>% 
+  filter(Group_Assignment == "Intervention",
+         Complete == "Complete") %>% 
+  arrange(PRE_Overall_SEFF.Sum) %>% 
   mutate(
-    Rank_Order = seq_along(PRE_Overall_SEFF.Mean),
-    Pct_Order = percent_rank(PRE_Overall_SEFF.Mean)
+    Rank_Order = seq_along(PRE_Overall_SEFF.Sum),
+    Pct_Order = percent_rank(PRE_Overall_SEFF.Sum)
   ) %>% 
   ggplot(aes(x = Rank_Order)) +
   # 1. Add the arrows (vertical segments)
   geom_segment(aes(
     xend = Rank_Order, 
-    y = PRE_Overall_SEFF.Mean, 
-    yend = POST_Overall_SEFF.Mean
+    y = PRE_Overall_SEFF.Sum, 
+    yend = POST_Overall_SEFF.Sum
   ), 
   arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
   color = "gray", 
   alpha = 0.5) +
   
   # 2. Add the PRE points
-  geom_point(aes(y = PRE_Overall_SEFF.Mean, color = "PRE_Overall_SEFF.Mean")) +
+  geom_point(aes(y = PRE_Overall_SEFF.Sum, color = "PRE_Overall_SEFF.Sum")) +
   
   # 3. Add the POST points
-  geom_point(aes(y = POST_Overall_SEFF.Mean, color = "POST_Overall_SEFF.Mean")) +
+  geom_point(aes(y = POST_Overall_SEFF.Sum, color = "POST_Overall_SEFF.Sum")) +
+  
+  #4. Grouping...
+  #facet_wrap(~Complete)+
   
   # Formatting
-  scale_color_manual(values = c("PRE_Overall_SEFF.Mean" = "red", "POST_Overall_SEFF.Mean" = "blue")) +
+  scale_color_manual(values = c("PRE_Overall_SEFF.Sum" = "red", "POST_Overall_SEFF.Sum" = "blue")) +
   labs(
     title = "Individual Self-Efficacy Score Change (Ranked by PRE Score)",
     x = "Participant Rank (Low to High PRE Self-Efficacy)",
@@ -3781,7 +3877,49 @@ EFF.scored %>%
   theme_minimal()
 ```
 
-![](_plot_images/unnamed-chunk-24-1.png)<!-- -->
+![](_plot_images/unnamed-chunk-25-1.png)<!-- -->
+
+``` r
+EFF.check %>% 
+  filter(Group_Assignment == "Intervention",
+         Complete == "Complete") %>% 
+  arrange(PRE_Parent_Outcome_Expectations.Sum) %>% 
+  mutate(
+    Rank_Order = seq_along(PRE_Parent_Outcome_Expectations.Sum),
+    Pct_Order = percent_rank(PRE_Parent_Outcome_Expectations.Sum)
+  ) %>% 
+  ggplot(aes(x = Rank_Order)) +
+  # 1. Add the arrows (vertical segments)
+  geom_segment(aes(
+    xend = Rank_Order, 
+    y = PRE_Parent_Outcome_Expectations.Sum, 
+    yend = POST_Parent_Outcome_Expectations.Sum
+  ), 
+  arrow = arrow(length = unit(.35, "cm")), # Adds the arrow head
+  color = "gray", 
+  alpha = 0.5) +
+  
+  # 2. Add the PRE points
+  geom_point(aes(y = PRE_Parent_Outcome_Expectations.Sum, color = "PRE_Parent_Outcome_Expectations.Sum")) +
+  
+  # 3. Add the POST points
+  geom_point(aes(y = POST_Parent_Outcome_Expectations.Sum, color = "POST_Parent_Outcome_Expectations.Sum")) +
+  
+  #4. Grouping...
+  #facet_wrap(~Complete)+
+  
+  # Formatting
+  scale_color_manual(values = c("PRE_Parent_Outcome_Expectations.Sum" = "red", "POST_Parent_Outcome_Expectations.Sum" = "blue")) +
+  labs(
+    title = "Individual Self-Efficacy Score Change (Ranked by PRE Score)",
+    x = "Participant Rank (Low to High PRE Self-Efficacy)",
+    y = "Total Self-Efficacy Score",
+    color = "Timepoint"
+  ) +
+  theme_minimal()
+```
+
+![](_plot_images/unnamed-chunk-26-1.png)<!-- -->
 
 ### Interpretation
 

@@ -322,10 +322,10 @@ EFF.check %>% rstatix::levene_test(PRE_Overall_SEFF.Mean ~ Group_Assignment) %>%
 ```
 **fail to reject null; standard t-test is fine**
 
-
+- Note: Can't check against Controls here
 ```{r}
-EFF.check %>% rstatix::levene_test(POST_Overall_SEFF.Mean ~ Group_Assignment) %>% 
-  mutate("Equal Variance" = ifelse(p < 0.05, "Reject Null (Adjust Test)", "Fail to Reject Null (Standard Test)"))
+# EFF.check %>% rstatix::levene_test(POST_Overall_SEFF.Mean ~ Group_Assignment) %>% 
+#   mutate("Equal Variance" = ifelse(p < 0.05, "Reject Null (Adjust Test)", "Fail to Reject Null (Standard Test)"))
 ## reject null: use POOLED variance (or Welch's) ; likely to be the case given that Inervention POST was non-normal. 
 
 ```
@@ -446,39 +446,39 @@ lm(POST_Overall_SEFF.Mean ~ PRE_Overall_SEFF.Mean, data = EFF.check) %>% plot()
 
 
 ```{r}
-EFF.check %>%
-  #filter(Filter_Criterion == "Include") %>%
-  filter(Group_Assignment == "Intervention") %>%
-  select(StudyID, contains(".Mean")) %>%
-  pivot_longer(cols = contains(c("Overall", "Parent")), names_to = "Composite", values_to = "Score") %>%
-  mutate(
-    Timepoint = if_else(str_detect(Composite, "PRE_"), "Pre-Test", "Post-Test"),
-    Timepoint = factor(Timepoint, levels = c("Pre-Test", "Post-Test")),
-  ) %>%
-  mutate(Composite_Type = str_replace_all(Composite, "_", " ")) %>% 
-  ggboxplot(
-    x = "Timepoint", y = "Score",
-    color = "Condition", palette = "jco",
-    add = "jitter",
-    facet.by = "Composite",
-    short.panel.labs = TRUE
-  ) +
-  labs(
-    title = "Composite Scores: Pre-Test vs. Post-Test",
-    x = "Timepoint",
-    y = "Mean Score"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-
-# Run Paired T-Tests
-#EFF.t_test_results <- EFF.test.long %>%
-  rstatix::pairwise_t_test(Score ~ Timepoint, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "greater", pool.sd=TRUE)
-  #adjust_pvalue(method = "holm") %>%
-  #add_significance("p.adj")
-
-EFF.t_test_results
+# EFF.check %>%
+#   #filter(Filter_Criterion == "Include") %>%
+#   filter(Group_Assignment == "Intervention") %>%
+#   select(StudyID, contains(".Mean")) %>%
+#   pivot_longer(cols = contains(c("Overall", "Parent")), names_to = "Composite", values_to = "Score") %>%
+#   mutate(
+#     Timepoint = if_else(str_detect(Composite, "PRE_"), "Pre-Test", "Post-Test"),
+#     Timepoint = factor(Timepoint, levels = c("Pre-Test", "Post-Test")),
+#   ) %>%
+#   mutate(Composite_Type = str_replace_all(Composite, "_", " ")) %>% 
+#   ggboxplot(
+#     x = "Timepoint", y = "Score",
+#     color = "Condition", palette = "jco",
+#     add = "jitter",
+#     facet.by = "Composite",
+#     short.panel.labs = TRUE
+#   ) +
+#   labs(
+#     title = "Composite Scores: Pre-Test vs. Post-Test",
+#     x = "Timepoint",
+#     y = "Mean Score"
+#   ) +
+#   theme_minimal() +
+#   theme(legend.position = "none")
+# 
+# 
+# # Run Paired T-Tests
+# EFF.t_test_results <- EFF.test.long %>%
+#   rstatix::pairwise_t_test(Score ~ Timepoint, paired = TRUE, detailed = TRUE, conf.level = 0.1, alternative = "greater", pool.sd=TRUE)
+#   #adjust_pvalue(method = "holm") %>%
+#   #add_significance("p.adj")
+# 
+# EFF.t_test_results
 ```
 
 
@@ -562,6 +562,7 @@ EFF.check %>%
   ) +
   theme_minimal()
 ```
+
 ```{r}
 EFF.check %>% 
   filter(Group_Assignment == "Intervention",

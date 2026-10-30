@@ -1,0 +1,62 @@
+Variable / Field Name,Form Name,Section Header,Field Type,Field Label,"Choices, Calculations, OR Slider Labels",Field Note,Text Validation Type OR Show Slider Number,Text Validation Min,Text Validation Max,Identifier?,Branching Logic (Show field only if...),Required Field?,Custom Alignment,Question Number (surveys only),Matrix Group Name,Matrix Ranking?,Field Annotation
+intro,pre_parent_self_efficacy,,descriptive,"Instructions to Caregivers: Please consider whether you agree or disagree with each statement, and circle the 
+number that you think best describes you and your child. When you see the words ""early interventionist"", this means 
+the person who provides services to your child such as a speech therapist, occupational therapist, or parent educator, 
+and who is a part of this research project. ",,,,,,,,,,,,,
+sickchild,pre_parent_self_efficacy,,radio," If my child is having problems, I would be able to think of some ways to help my child.","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+improvement,pre_parent_self_efficacy,,radio,"When my child shows improvement, it is because I am able to make a difference in my child's development.
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+development,pre_parent_self_efficacy,,radio,"When it comes right down to it, parents really can't do much because most of a children's development depends on their early interventionists/therapists.
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+difficulty,pre_parent_self_efficacy,,radio,"If one of my child's early interventionists/therapists have difficulty with my child, I would be able to offer some suggestions.
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+progress,pre_parent_self_efficacy,,radio,"Children will make the most progress if their early interventionists/therapists work with them rather than if the parents work with the children.
+
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence,pre_parent_self_efficacy,,radio,"Even a good parent may not have much impact on whether children feel good about themselves.
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_2,pre_parent_self_efficacy,,radio," I feel that I can work well with my child's early interventionists/therapists as part of my child's team.
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_3,pre_parent_self_efficacy,,radio,"Because there is so little help from the community, I am often sad or angry about how few services I can find for my child and the rest of my family.
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_4,pre_parent_self_efficacy,,radio,"If my child learns something quickly, it would probably be because I know how to help my child learn new things.
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_5,pre_parent_self_efficacy,,radio,"The amount that a young child will learn is mostly due to family background, the neighborhood, and the early interventionists/therapists rather than their parents.
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_6,pre_parent_self_efficacy,,radio,"On most days, I can handle most of the ups and downs of being a parent.
+
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_7,pre_parent_self_efficacy,,radio,"I worry that I am not a good enough parent due to outside demands placed upon my time and energy.
+
+
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_8,pre_parent_self_efficacy,,radio,"When my child is ill, I feel that there is nothing I can do to help my child or other members of my family.
+
+
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_9,pre_parent_self_efficacy,,radio,"Over the past year, I can see the progress that I have made in becoming a better parent.
+
+
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_10,pre_parent_self_efficacy,,radio,"No matter how hard I try, it seems that I just cannot find a way to get the services that my
+child and my family needs.
+
+
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,
+confidence_11,pre_parent_self_efficacy,,radio,"The traits that a child has before he or she is born are more important than anything that the child's parents can do for the child.
+
+
+
+","1, Strongly Disagree | 2, Disagree | 3, Somewhat Disagree | 4, Neutral | 5, Somewhat Agree | 6, Agree | 7, Strongly Agree | 8, Not applicable",,,,,,,y,,,,,

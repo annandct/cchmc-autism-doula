@@ -1,0 +1,266 @@
+---
+always_allow_html: true
+output:
+  rmarkdown::github_document: default
+  always_allow_html: default
+  output:
+  md_document:
+    variant: gfm
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../") })
+date: "`r Sys.Date()`"
+title: "_01_Analytical_Data_Extract_and_Save"
+---
+
+
+```{md, include = FALSE}
+---
+date: "`r Sys.Date()`"
+author: "ACT"
+title: "_01_Analytical_Data_Extract_and_Save"
+output: "html_document"
+---
+```
+
+
+```{r setup, include=FALSE}
+base_dir <- "../" # where output should default to
+base_url <- "" # keep as is
+fig_path <- "_plot_images/" # where image output should go
+
+knitr::opts_knit$set(base.dir = base_dir)
+knitr::opts_chunk$set(fig.path = fig_path,
+                      cache.path = 'cache/',  #log files go here
+                      message=FALSE, warning=FALSE, cache = FALSE) 
+```  
+
+# 0. Setup & Data Ingestion
+## 0.1 Libraries
+
+```{r}
+library(dplyr)       # Data manipulation
+library(stringr)     # String manipulation
+library(tidyr)       # Data pivoting
+library(readr)       # Reading data
+library(kableExtra)  # HTML Table formatting
+library(ggplot2)     # Visualizations
+library(ggpubr)      # Publication-ready plots
+library(rstatix)     # T-tests and effect sizes
+library(broom)       # Tidy statistical outputs
+library(forcats)     # Factor manipulation
+library(effectsize)  # effect size & omega squared
+
+```
+
+
+  
+- **Structure**
+  - **UPDATED DATA FILE** - SEFF_Updated...
+    - Both Surveys are connected to a single participant ID (Pre and Post) and collated in one spreadsheet
+  - Will separate each into its own table, for clarity/checks and file write out. 
+  - Rejoin and save data files for analysis scripts.
+
+  - Study_ID (Joined ID across pre and post, unique to participant)
+  - Group Assignment (Control == 2 or Intervention == 1)
+  - Stress Scale: **PSS** - *Perceived Stress Scale* - 10 Questions
+    - ***Reverse Score Items*** (Done automatically in RedCap Survey Software)
+    - Scoring: PSS scores are obtained by reversing responses (e.g., 0 = 4, 1 = 3, 2 = 2, 3 = 1 & 4 = 0) to the four positively stated items (items 4, 5, 7, & 8) and then summing across all scale items. A short 4 item scale can be made from questions 2, 4, 5 and 10 of the PSS 10 item scale.
+  - SEFF Scale: **EFF** - *Eearly Intervention Parent Self Efficacy* -  16 Questions
+    - **Scoring Guidelines (Guimond et al., 2008):**
+    - Mean/Total scores are computed by aggregating all items of the specific scale.
+    - Reverse Scored Items: 3, 5, 6, 8, 10, 12, 13, 15, 16.
+    - Parent Outcome Expectations: 3, 4, 5, 6, 7, 8, 10, 12, 15, 16.
+    - Parent Competence: 1, 2, 9, 14.
+
+
+# 1. Ingest Files
+## Participant Assignments
+```{r}
+Participant_Assignments <- readxl::read_xlsx("../_data/Final participants.xlsx") %>% 
+  # destructive rename and transform
+  transmute(
+    "Assigned_Study_ID_Number" = `ID Number`,
+    "Group_Assignment" = `1 - AD; 2 - control`) %>% 
+    # "Consent" = `Consent form?`,
+    # "Pre_Survey" = `Pre surveys?`,
+    # "Post_Survey" = `Post surveys?`,
+    # "Study_Status" = `Study Status`,
+    # "Number_Doula_Visits" = `Number of doula visits`
+    #         )
+#%>% 
+  # filter for only included data
+#filter(
+#    Consent == "y",
+#    Study_Status %in% c("finished","complete")) %>% 
+  mutate(Group_Assignment = ifelse(Group_Assignment == 1, "Intervention", "Control"))
+```
+
+## PRE-TEST (Info and Scales)
+```{r}
+info_and_pretest.sel <- 
+  read_csv("../_data/FamilyInfoAndPreMeas_DATA_FINAL FOR COLIN.csv") %>% 
+    rename("Assigned_Study_ID_Number" = `participant ID assigned by staff`) |> 
+  ## Select
+  select(
+    Assigned_Study_ID_Number,
+    autismdx,
+    #PSS
+    promis_sc001:promis_sc014, # promis_sc001 is ALREADY REVERSE coded
+    sickchild:confidence_11 # efficacy, cols sickchild:confidence11 - not reverse coded
+)
+
+## Mutate
+info_and_pre.mut <- info_and_pretest.sel |>
+  rename_with(~ paste0("PRE.PSS_Q", 1:10), .cols = promis_sc001:promis_sc014) |> 
+  rename_with(~ paste0("PRE.EFF_Q", 1:16), .cols = sickchild:confidence_11) |> 
+  mutate(across(ends_with(c("EFF_Q3", "EFF_Q5", "EFF_Q6", "EFF_Q8", "EFF_Q10", "EFF_Q12", "EFF_Q13", "EFF_Q15", "EFF_Q16")), 
+                ~ 8 - .)) #  For 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
+  
+## Join for finalized set
+PRE_TEST <- left_join(
+  x = info_and_pre.mut,
+  y = Participant_Assignments,
+  by = "Assigned_Study_ID_Number") |> 
+    select("Study_ID" = Assigned_Study_ID_Number,
+         autismdx, 
+         Group_Assignment,
+         contains("PRE.PSS"),
+         contains("PRE.EFF"))
+
+## Test Set (Calculated Scores only)
+
+PRE_TEST.scores <- PRE_TEST |> 
+  rowwise() |> 
+  transmute(
+    "Study_ID" = Study_ID,
+    Group_Assignment,
+    # CALC Scores
+    "PRE.PSS.sum" = sum(c_across(contains("PRE.PSS_Q")), na.rm=TRUE),
+    "PRE.PSS.mean" = mean(c_across(contains("PRE.PSS_Q")), na.rm=TRUE),
+    "PRE.EFF.sum" = sum(c_across(contains("PRE.EFF_Q")), na.rm=TRUE),
+    "PRE.EFF.mean" = mean(c_across(contains("PRE.EFF_Q")), na.rm=TRUE)) |> 
+  ungroup()
+
+## View
+PRE_TEST.scores |> 
+  kable(caption="PRETEST SCORES") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+## POST-TEST (Scales)
+Data Files:
+- Control Data
+- Post Data 
+  - Has Study ID Number "participant number"
+  - Survey Cols:
+    - PSS Stress:post_upset:post_piling_up
+    - EFF Efficacy: childproblems:difference15 
+## RedCap Downloaded Files
+
+```{r}
+## raw_data in CSV format... means we get the numbers (and also some added data - rather than LABELS (strongly agree etc...))
+# read RAWS
+control.csv <- readr::read_csv("../_data/CONTROLPostMeasuresA_DATA_2026-08-24_1126.csv", col_names = TRUE)
+#pre.csv <- readr::read_csv("../_data/FamilyInfoAndPreMeas_DATA_2026-08-24_1122.csv", col_names = TRUE)
+post.csv <- readr::read_csv("../_data/PostMeasuresAndSatis_DATA_2026-08-24_1123.csv", col_names = TRUE)
+```
+
+```{r}
+control.csv |> glimpse()
+```
+
+
+```{r}
+## Post_TEST Data Ingestion & Combination
+
+# 1. Combine Control and Intervention Post datasets
+post_combined.raw <- bind_rows(control.csv, post.csv)
+
+# 2. Select and standardise column names
+post.sel <- post_combined.raw |> 
+  rename("Assigned_Study_ID_Number" = participant_number) |> 
+  select(
+    Assigned_Study_ID_Number,
+    # PSS Stress (10 items)
+    post_upset:post_piling_up,
+    # EFF Efficacy (16 items)
+    child_problems:difference_15
+  )
+
+## Mutate & Reverse Code
+post.mut <- post.sel |> 
+  rename_with(~ paste0("POST.PSS_Q", 1:10), .cols = post_upset:post_piling_up) |> 
+  rename_with(~ paste0("POST.EFF_Q", 1:16), .cols = child_problems:difference_15) |> 
+  mutate(
+    across(
+      ends_with(c("EFF_Q3", "EFF_Q5", "EFF_Q6", "EFF_Q8", "EFF_Q10", "EFF_Q12", "EFF_Q13", "EFF_Q15", "EFF_Q16")), 
+      ~ 8 - .
+    ) # For 1-7 reverse coding (8 - 1 = 7, 8 - 7 = 1)
+  )
+
+## Join for finalized set
+POST_TEST <- left_join(
+  x = post.mut,
+  y = Participant_Assignments,
+  by = "Assigned_Study_ID_Number"
+) |> 
+  select(
+    "Study_ID" = Assigned_Study_ID_Number,
+    Group_Assignment,
+    contains("POST.PSS"),
+    contains("POST.EFF")
+  )
+
+## Test Set (Calculated Scores only)
+POST_TEST.scores <- POST_TEST |> 
+  rowwise() |> 
+  transmute(
+    "Study_ID" = Study_ID,
+    Group_Assignment,
+    # CALC Scores
+    "POST.PSS.sum"  = sum(c_across(contains("POST.PSS_Q")), na.rm = TRUE),
+    "POST.PSS.mean" = mean(c_across(contains("POST.PSS_Q")), na.rm = TRUE),
+    "POST.EFF.sum"  = sum(c_across(contains("POST.EFF_Q")), na.rm = TRUE),
+    "POST.EFF.mean" = mean(c_across(contains("POST.EFF_Q")), na.rm = TRUE)
+  ) |> 
+  ungroup()
+
+## View
+POST_TEST.scores |> 
+  kable(caption = "POSTTEST SCORES") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>% 
+  scroll_box(height = "400px", width = "100%")
+```
+
+
+# Finalize and Write Files
+```{r}
+
+CCMHC_Study_Data_Finalized <- left_join(
+  PRE_TEST |> filter(!is.na(Study_ID)),
+  POST_TEST |> filter(!is.na(Study_ID)),
+  by = c("Study_ID", "Group_Assignment")
+) 
+
+CCMHC_Study_Scores_Finalized <- left_join(
+  PRE_TEST.scores |> filter(!is.na(Study_ID)),
+  POST_TEST.scores |> filter(!is.na(Study_ID)),
+  by = c("Study_ID", "Group_Assignment")
+) 
+
+save(CCMHC_Study_Data_Finalized, CCMHC_Study_Scores_Finalized,
+     file = "../_output/Analytic_Tables_Finalize_2026-10.Rdata")
+
+write.csv(x = CCMHC_Study_Scores_Finalized, file = "../_output/CCMHC_Study_Scores_Finalized.csv")
+```
+
+```{r}
+CCMHC_Study_Scores_Finalized |> 
+  arrange(Group_Assignment) |> 
+  kable(caption = "Finalized Scores") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>% 
+  scroll_box(height = "400px", width = "100%")
+```
+
